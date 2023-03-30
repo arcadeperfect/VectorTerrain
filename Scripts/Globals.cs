@@ -7,6 +7,5 @@
 
         // public static GeneralManagement GeneralManagement { get; set; }
         // public static TouchInterfaceManager TouchInterfaceManager { get; set; }
-    
     }
 }

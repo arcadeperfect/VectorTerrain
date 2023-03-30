@@ -6,10 +6,9 @@ namespace VectorTerrain.Scripts.Types
     {
         private Vector3 _vectorSeed;
         public Vector3 vectorSeed => _vectorSeed;
-        private int ticks;
-        
-        public int Ticks => ticks;
-        
+
+        public int Ticks { get; private set; }
+
         public void SetSeed(Vector3 vectorSeed)
         {
             _vectorSeed = vectorSeed;
@@ -18,7 +17,7 @@ namespace VectorTerrain.Scripts.Types
         public void Increment()
         {
             _vectorSeed.x += 1;
-            ticks++;
+            Ticks++;
         }
 
         // public void IncrementTick()
@@ -29,14 +28,14 @@ namespace VectorTerrain.Scripts.Types
         public void Reset()
         {
             _vectorSeed = Vector3.zero;
-            ticks = 0;
+            Ticks = 0;
         }
 
         public override string ToString()
         {
-            string toPrint = "---\n";
+            var toPrint = "---\n";
             toPrint += $"VecorSeed : {vectorSeed}\n";
-            toPrint += $"Ticks : {ticks}\n\n";
+            toPrint += $"Ticks : {Ticks}\n\n";
             return toPrint;
         }
     }

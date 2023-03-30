@@ -1,4 +1,5 @@
-﻿using Shapes;
+﻿using System;
+using Shapes;
 using UnityEngine;
 
 // public class Vertex2Node
@@ -96,15 +97,21 @@ using UnityEngine;
 
 namespace VectorTerrain.Scripts.Types
 {
-    [System.Serializable]
+    [Serializable]
     public struct Vertex2
     {
         private const float THICKNESS_DEFAULT = 1f;
         private static readonly Vector2 NormalDefault = Vector2.zero;
         private static readonly Color ColorDefault = Color.white;
-    
+
         public Vector2 Pos;
-    
+
+        public Vector2 normal;
+
+        public float thickness;
+
+        private Color colorGenerator;
+
         /// <summary>
         ///     Return distance from this Vertex to the previous one
         /// </summary>
@@ -115,39 +122,6 @@ namespace VectorTerrain.Scripts.Types
         /// </summary>
         public float? TotalDist;
 
-        private Color colorGenerator;
-
-        public Color Color
-        {
-            get
-            {
-                return colorGenerator;
-            }
-            set
-            {
-                colorGenerator = value;
-            }
-        }
-
-        public Vector2 normal;
-        public Vector2 Normal
-        {
-            get { return normal;}
-            set { normal = value; }
-        }
-
-        public float thickness;
-    
-        public float x
-        {
-            get => Pos.x;
-            set => Pos.x = value;
-        }
-        public float y
-        {
-            get => Pos.y;
-            set => Pos.y = value;
-        }
         public Vertex2(Vector2[] vectorNormalArray)
         {
             Pos = vectorNormalArray[0];
@@ -157,6 +131,7 @@ namespace VectorTerrain.Scripts.Types
             Dist = null;
             TotalDist = null;
         }
+
         public Vertex2(Vector2 initVec, Vector2 Normal)
         {
             Pos = initVec;
@@ -166,6 +141,7 @@ namespace VectorTerrain.Scripts.Types
             Dist = null;
             TotalDist = null;
         }
+
         public Vertex2(Vector2 initVec)
         {
             Pos = initVec;
@@ -175,6 +151,7 @@ namespace VectorTerrain.Scripts.Types
             Dist = null;
             TotalDist = null;
         }
+
         public Vertex2(Vector2 initVec, Color Color)
         {
             Pos = initVec;
@@ -184,6 +161,7 @@ namespace VectorTerrain.Scripts.Types
             Dist = null;
             TotalDist = null;
         }
+
         public Vertex2(Vector2 initVec, Color Color, float Thickness)
         {
             Pos = initVec;
@@ -193,6 +171,7 @@ namespace VectorTerrain.Scripts.Types
             Dist = null;
             TotalDist = null;
         }
+
         public Vertex2(float x, float y)
         {
             Pos = new Vector2(x, y);
@@ -202,6 +181,31 @@ namespace VectorTerrain.Scripts.Types
             Dist = null;
             TotalDist = null;
         }
+
+        public Color Color
+        {
+            get => colorGenerator;
+            set => colorGenerator = value;
+        }
+
+        public Vector2 Normal
+        {
+            get => normal;
+            set => normal = value;
+        }
+
+        public float x
+        {
+            get => Pos.x;
+            set => Pos.x = value;
+        }
+
+        public float y
+        {
+            get => Pos.y;
+            set => Pos.y = value;
+        }
+
         public static Vertex2 Lerp(Vertex2 a, Vertex2 b, float t)
         {
             var n = new Vertex2();
@@ -211,57 +215,83 @@ namespace VectorTerrain.Scripts.Types
             n.thickness = Mathf.Lerp(a.thickness, b.thickness, t);
             // n.Color = Color.Lerp(a.Color, b.Color, t); 
             n.Color = ColorPlus.LerpInLch(a.Color, b.Color, t);
-        
+
             //todo also lerp other properties, instead of taking all other properties from a
-        
+
             return n;
         }
-        public static Vertex2 operator-(Vertex2 a, Vector2 b) { return new Vertex2(a.Pos-b); }
-        public static Vertex2 operator-(Vertex2 a, Vertex2 b) { return new Vertex2(a.Pos-b.Pos); }
-        public static Vertex2 operator+(Vertex2 a, Vector2 b) { return new Vertex2(a.Pos+b); }
+
+        public static Vertex2 operator -(Vertex2 a, Vector2 b)
+        {
+            return new(a.Pos - b);
+        }
+
+        public static Vertex2 operator -(Vertex2 a, Vertex2 b)
+        {
+            return new(a.Pos - b.Pos);
+        }
+
+        public static Vertex2 operator +(Vertex2 a, Vector2 b)
+        {
+            return new(a.Pos + b);
+        }
+
         // public static Vertex2Node operator+(Vertex2Node a, Vertex2Node b) { return new Vertex2Node(a.Pos+b.Pos); }
-        public static Vertex2 operator*(Vertex2 a, Vertex2 b) { return new Vertex2(a.x * b.x, a.y * b.y); }
-        public static Vertex2 operator*(Vertex2 a, float d) { return new Vertex2(a.x * d, a.y * d); }
-        public static Vertex2 operator/(Vertex2 a, Vertex2 b) { return new Vertex2(a.x / b.x, a.y / b.y); }
+        public static Vertex2 operator *(Vertex2 a, Vertex2 b)
+        {
+            return new(a.x * b.x, a.y * b.y);
+        }
+
+        public static Vertex2 operator *(Vertex2 a, float d)
+        {
+            return new(a.x * d, a.y * d);
+        }
+
+        public static Vertex2 operator /(Vertex2 a, Vertex2 b)
+        {
+            return new(a.x / b.x, a.y / b.y);
+        }
 
         // allows auto casting to vector2
         public static implicit operator Vector2(Vertex2 self)
         {
             return self.Pos;
         }
+
         // allows auto casting to vector3
         public static implicit operator Vector3(Vertex2 self)
         {
             return self.Pos;
         }
-    
+
         // allows auto casting from vector2
         public static implicit operator Vertex2(Vector2 v)
         {
-            return new Vertex2(v);
+            return new(v);
         }
+
         // allows auto casting from vector3
         public static implicit operator Vertex2(Vector3 v)
         {
-            return new Vertex2(v);
+            return new(v);
         }
 
-        public static implicit operator Shapes.PolylinePoint(Vertex2 self)
+        public static implicit operator PolylinePoint(Vertex2 self)
         {
-            return new PolylinePoint(self.Pos, self.Color, self.thickness);
+            return new(self.Pos, self.Color, self.thickness);
         }
-    
+
         public override string ToString()
         {
             return "" + x + " " + y;
         }
-        
+
         public override bool Equals(object obj)
         {
             if (!(obj is Vertex2))
                 return false;
-        
-            Vertex2 other = (Vertex2)obj;
+
+            var other = (Vertex2) obj;
             return Pos == other.Pos &&
                    Dist == other.Dist &&
                    TotalDist == other.TotalDist &&
@@ -272,7 +302,7 @@ namespace VectorTerrain.Scripts.Types
 
         public override int GetHashCode()
         {
-            int hash = 17;
+            var hash = 17;
             hash = hash * 31 + Pos.GetHashCode();
             hash = hash * 31 + Dist.GetHashCode();
             hash = hash * 31 + TotalDist.GetHashCode();

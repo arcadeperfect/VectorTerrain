@@ -7,4 +7,3 @@ namespace VectorTerrain.Scripts.Types.Interfaces
         public event Action NodeUpdateEvent;
     }
 }
-

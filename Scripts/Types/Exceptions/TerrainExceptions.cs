@@ -10,8 +10,16 @@ namespace VectorTerrain.Scripts.Types.Exceptions
             {
             }
         }
+
         public class NoValidInputException : Exception
         {
+        }
+        
+        public class NotInitialisedException : Exception
+        {
+            public NotInitialisedException(string message) : base(message)
+            {
+            }
         }
     }
 }

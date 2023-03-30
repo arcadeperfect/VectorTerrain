@@ -29,7 +29,45 @@ namespace VectorTerrain.Scripts.Types
      */
 
         public float zOffset; // todo should this be here?
-        private float? _totalDistance = null;
+        private Dictionary<string, SeedContainer> _beginSeeds;
+
+        private Dictionary<string, SeedContainer> _endSeeds;
+
+        private float? _totalDistance;
+        private List<Vertex2> _verts;
+
+        // public List<Attr> VertexProperties;
+        // public List<Attr> SegmentAttrs;
+        // public Dictionary<string, List<Attr>> SegmentAttrs;
+
+
+        // private List<SectorSegment> _segmentAttributes;
+        // public List<SectorSegment> SegmentAttributes
+        // {
+        //     get => _segmentAttributes;
+        // }
+
+
+        // constructors
+        public SectorData()
+        {
+            Verts = new List<Vertex2>();
+            InitCollections();
+        }
+
+        public SectorData(bool initVecs)
+        {
+            if (initVecs)
+                Verts = new List<Vertex2> {Vector2.zero, Vector2.right};
+            Verts = !initVecs ? new List<Vertex2>() : new List<Vertex2> {Vector2.zero, Vector2.right};
+            InitCollections();
+        }
+
+        public SectorData(List<Vertex2> verts)
+        {
+            Verts = verts;
+            InitCollections();
+        }
 
         public float TotalLengh
         {
@@ -44,7 +82,6 @@ namespace VectorTerrain.Scripts.Types
         }
 
         public int Count => _verts.Count;
-        private Dictionary<string, SeedContainer> _beginSeeds;
 
         public Dictionary<string, SeedContainer> BeginSeeds
         {
@@ -52,28 +89,21 @@ namespace VectorTerrain.Scripts.Types
             set => _beginSeeds = value;
         }
 
-        private Dictionary<string, SeedContainer> _endSeeds;
-
         public Dictionary<string, SeedContainer> EndSeeds
         {
             get => _endSeeds;
             set => _endSeeds = value;
         }
 
-        private Vector2 _localStart;
-        public Vector2 LocalStart => _localStart;
-        private Vector2 _localEnd;
-        public Vector2 LocalEnd => _localEnd;
-        private List<Vertex2> _verts;
+        public Vector2 LocalStart { get; private set; }
+
+        public Vector2 LocalEnd { get; private set; }
 
         public List<Vertex2> Verts
         {
             get => _verts;
-            set
-            {
-                _verts = value;
-                // Process();
-            }
+            set => _verts = value;
+            // Process();
         }
 
         public List<PosMarker> Markers { get; set; }
@@ -81,73 +111,27 @@ namespace VectorTerrain.Scripts.Types
         public List<RegionNormalised> RegionsNormalised { get; set; }
         public List<RegionAbsolute> RegionsAbsolute { get; set; }
 
-        // public List<Attr> VertexProperties;
-        // public List<Attr> SegmentAttrs;
-        // public Dictionary<string, List<Attr>> SegmentAttrs;
-
-
-        // private List<SectorSegment> _segmentAttributes;
-        // public List<SectorSegment> SegmentAttributes
-        // {
-        //     get => _segmentAttributes;
-        // }
-
-
-
-        // constructors
-        public SectorData()
-        {
-            Verts = new List<Vertex2>();
-            InitCollections();
-        }
-
-        public SectorData(bool initVecs)
-        {
-            if (initVecs)
-                Verts = new List<Vertex2>() {Vector2.zero, Vector2.right};
-            Verts = !initVecs ? new() : new List<Vertex2>() {Vector2.zero, Vector2.right};
-            InitCollections();
-        }
-
-        public SectorData(List<Vertex2> verts)
-        {
-            Verts = verts;
-            InitCollections();
-        }
-
         // Methods
         private void InitCollections()
         {
-            Markers = new();
+            Markers = new List<PosMarker>();
             Segments = null;
-            RegionsNormalised = new();
-            RegionsAbsolute = new();
+            RegionsNormalised = new List<RegionNormalised>();
+            RegionsAbsolute = new List<RegionAbsolute>();
         }
 
         public void Process()
         {
             //todo why is this is getting called on empty sectors
-            if (_verts.Count == 0)
-            {
-                throw new SectorDataEmptyException();
-            }
+            if (_verts.Count == 0) throw new SectorDataEmptyException();
 
-            _localStart = _verts[0];
-            _localEnd = _verts[^1];
-
-
-        }
-
-        public class SectorDataEmptyException : Exception
-        {
-            public SectorDataEmptyException()
-            {
-            }
+            LocalStart = _verts[0];
+            LocalEnd = _verts[^1];
         }
 
         public void SetPos(List<Vertex2> Verts)
         {
-            for (int i = 0; i < Verts.Count; i++)
+            for (var i = 0; i < Verts.Count; i++)
             {
                 var v = Verts[i];
                 v.Pos = new Vector2(1, 2);
@@ -163,32 +147,32 @@ namespace VectorTerrain.Scripts.Types
             u.Dist = 0;
             _verts[0] = u;
 
-            Vertex2 initVert = _verts[0];
+            var initVert = _verts[0];
             initVert.TotalDist = 0;
             _verts[0] = initVert;
 
-            for (int i = 1; i < _verts.Count; i++)
+            for (var i = 1; i < _verts.Count; i++)
             {
-                Vector2 current = _verts[i].Pos;
-                Vector2 previous = _verts[i - 1].Pos;
-                Vertex2 temp = _verts[i];
+                var current = _verts[i].Pos;
+                var previous = _verts[i - 1].Pos;
+                var temp = _verts[i];
                 temp.Dist = Vector2.Distance(current, previous);
                 totalDistance += (float) temp.Dist;
                 temp.TotalDist = totalDistance;
                 _verts[i] = temp;
             }
 
-            this._totalDistance = totalDistance;
+            _totalDistance = totalDistance;
         }
 
         public void ProcessSegments()
         {
             if (Verts.Count == 0)
                 return;
-            Segments = new();
-            for (int i = 1; i < Verts.Count; i++)
+            Segments = new List<SectorSegment>();
+            for (var i = 1; i < Verts.Count; i++)
             {
-                SectorSegment seg = new SectorSegment(_verts, i - 1, i);
+                var seg = new SectorSegment(_verts, i - 1, i);
                 Segments.Add(seg);
                 // var v = new Vector2();
                 // v.RotateCCW90()
@@ -198,9 +182,10 @@ namespace VectorTerrain.Scripts.Types
         public void ProcessNormals()
         {
             ProcessSegments(); // todo could me optimised to not always run
-            for (int i = 0; i < Verts.Count; i++)
+            for (var i = 0; i < Verts.Count; i++)
             {
-                if (i == 0 || i == _verts.Count - 1) //todo handling first and last normals will be annoying, do it later
+                if (i == 0 ||
+                    i == _verts.Count - 1) //todo handling first and last normals will be annoying, do it later
                     continue;
 
                 var s1 = Segments[i - 1];
@@ -216,19 +201,19 @@ namespace VectorTerrain.Scripts.Types
 
         public void SetColor(Color color)
         {
-            for (int i = 0; i < _verts.Count; i++)
+            for (var i = 0; i < _verts.Count; i++)
             {
                 var v = _verts[i];
                 v.Color = color;
                 _verts[i] = v;
             }
         }
-    
+
         public void MakeBackwards()
         {
-            List<Vertex2> reversedVerts = new List<Vertex2>();
+            var reversedVerts = new List<Vertex2>();
             var pivot = Verts[0].Pos;
-			
+
             foreach (var vert in Verts)
             {
                 var v = vert;
@@ -237,10 +222,11 @@ namespace VectorTerrain.Scripts.Types
                 v.x += pivot.x;
                 reversedVerts.Add(v);
             }
+
             Verts = reversedVerts;
 
-            _localStart = _verts[^1];
-            _localEnd = _verts[0];
+            LocalStart = _verts[^1];
+            LocalEnd = _verts[0];
         }
 
         // public VertexSegment SegmentAtPointNormalized(float t)
@@ -273,11 +259,9 @@ namespace VectorTerrain.Scripts.Types
             var c = a * _totalDistance;
             var d = b * _totalDistance;
 
-            for (int i = 0; i < Verts.Count; i++)
-            {
+            for (var i = 0; i < Verts.Count; i++)
                 if (Verts[i].TotalDist >= c && Verts[i].TotalDist <= d)
                     ReturnMe.Add(i);
-            }
 
             return ReturnMe;
         }
@@ -293,17 +277,15 @@ namespace VectorTerrain.Scripts.Types
             var d = b * _totalDistance;
 
             foreach (var vert in _verts)
-            {
                 if (vert.TotalDist >= c && vert.TotalDist <= d)
                     ReturnMe.Add(vert);
-            }
 
             return ReturnMe;
         }
 
         public int IndexOfNearestPointToNormalised(float p)
         {
-            return _verts.IndexOf((Vertex2) NearestPointToNormalised(p));
+            return _verts.IndexOf(NearestPointToNormalised(p));
         }
 
         public Vertex2 NearestPointToNormalised(float p)
@@ -311,14 +293,14 @@ namespace VectorTerrain.Scripts.Types
             if (_totalDistance == null)
                 ProcessDistances();
 
-            float pDist = (float) _totalDistance * p;
+            var pDist = (float) _totalDistance * p;
 
             Vertex2? closest = null;
-            float currentClosestDist = float.MaxValue;
+            var currentClosestDist = float.MaxValue;
 
             foreach (var v in _verts)
             {
-                float distFromPoint = Mathf.Abs((float) v.TotalDist - pDist);
+                var distFromPoint = Mathf.Abs((float) v.TotalDist - pDist);
 
                 if (distFromPoint < currentClosestDist)
                 {
@@ -347,37 +329,39 @@ namespace VectorTerrain.Scripts.Types
             var totalDistance = (float) sectorData._totalDistance;
 
             if (targetDistance < 0)
-                throw new TraversException("target distance was negative  -> " + targetDistance + " : " + totalDistance);
-        
+                throw new TraversException("target distance was negative  -> " + targetDistance + " : " +
+                                           totalDistance);
+
             if (targetDistance > totalDistance)
-                throw new TraversException("target distance was greater than totalDistance  -> " + targetDistance + " : " + totalDistance);
+                throw new TraversException("target distance was greater than totalDistance  -> " + targetDistance +
+                                           " : " + totalDistance);
 
             if (normalized)
                 targetDistance = totalDistance * targetDistance;
 
             targetDistance = Mathf.Clamp(targetDistance, 0, totalDistance);
 
-            Vertex2 lerped = new Vertex2();
+            var lerped = new Vertex2();
 
             float distanceSoFar = 0;
-            for (int i = 0; i < verts.Count - 1; i++)
+            for (var i = 0; i < verts.Count - 1; i++)
             {
                 if (i < verts.Count - 1 && verts[i + 1].Dist == null)
                     throw new TraversException("Next vertex distance was null");
 
-                float thisDist = (float) verts[i].Dist;
-                float nextDist = (float) verts[i + 1].Dist;
+                var thisDist = (float) verts[i].Dist;
+                var nextDist = (float) verts[i + 1].Dist;
 
                 distanceSoFar += thisDist;
 
                 // continue looping until we know the target point is closer than the next vert
-                float z = distanceSoFar + nextDist;
+                var z = distanceSoFar + nextDist;
                 if (z < targetDistance)
                     continue;
 
                 // if we are here,the target point lies before the next vert
-                float remainingDistance = targetDistance - distanceSoFar;
-                float lerpIndex = remainingDistance / nextDist;
+                var remainingDistance = targetDistance - distanceSoFar;
+                var lerpIndex = remainingDistance / nextDist;
 
                 lerped = Vertex2.Lerp(verts[i], verts[i + 1], lerpIndex);
 
@@ -387,29 +371,18 @@ namespace VectorTerrain.Scripts.Types
             return lerped;
         }
 
-        public class TraversException : Exception
-        {
-            public TraversException(string message) : base(message)
-            {
-            }
-        }
-
         public static SectorData Lerp(SectorData a, SectorData b, float t)
         {
-
             if (a.Verts.Count != b.Verts.Count)
             {
                 Debug.Log("vert counts did not match");
                 return null;
             }
 
-            SectorData n = new SectorData();
+            var n = new SectorData();
 
 
-            for (int i = 0; i < a.Verts.Count; i++)
-            {
-                n._verts.Add(Vertex2.Lerp(a._verts[i], b._verts[i], t));
-            }
+            for (var i = 0; i < a.Verts.Count; i++) n._verts.Add(Vertex2.Lerp(a._verts[i], b._verts[i], t));
 
             n.Process();
             return n;
@@ -451,37 +424,44 @@ namespace VectorTerrain.Scripts.Types
 
         public static List<Vertex2> Lerp(List<Vertex2> a, List<Vertex2> b, List<float> t)
         {
-            int count = Mathf.Min(a.Count, b.Count);
+            var count = Mathf.Min(a.Count, b.Count);
             count = Mathf.Min(count, t.Count);
 
             if (t.Sum() == 0) return a;
             if (t.Sum() > count - 0.9999999f) return b;
 
-            Vertex2[] returnMe = new Vertex2[count];
+            var returnMe = new Vertex2[count];
 
-            for (int i = 0; i < a.Count; i++)
-            {
+            for (var i = 0; i < a.Count; i++)
                 returnMe[i] = Vertex2.Lerp(a[i], b[i], t[i]);
-                // n._verts.Add(Vertex2.Lerp(a._verts[i], b._verts[i], t[i]));
-            }
+            // n._verts.Add(Vertex2.Lerp(a._verts[i], b._verts[i], t[i]));
 
             return returnMe.ToList();
         }
 
         public static Vertex2[] Lerp(Vertex2[] a, Vertex2[] b, float[] t)
         {
-            int count = Mathf.Min(a.Length, b.Length);
+            var count = Mathf.Min(a.Length, b.Length);
             count = Mathf.Min(count, t.Length);
 
-            Vertex2[] returnMe = new Vertex2[count];
+            var returnMe = new Vertex2[count];
 
-            for (int i = 0; i < a.Length; i++)
-            {
+            for (var i = 0; i < a.Length; i++)
                 returnMe[i] = Vertex2.Lerp(a[i], b[i], t[i]);
-                // n._verts.Add(Vertex2.Lerp(a._verts[i], b._verts[i], t[i]));
-            }
+            // n._verts.Add(Vertex2.Lerp(a._verts[i], b._verts[i], t[i]));
 
             return returnMe;
+        }
+
+        public class SectorDataEmptyException : Exception
+        {
+        }
+
+        public class TraversException : Exception
+        {
+            public TraversException(string message) : base(message)
+            {
+            }
         }
 
         // public static SectorData TraverseLerp(SectorData a, SectorData b, List<float> t)
@@ -539,12 +519,12 @@ namespace VectorTerrain.Scripts.Types
 
         public class RegionPoint
         {
-            public float value;
             public float t;
+            public float value;
 
             public RegionPoint(float t, float v)
             {
-                this.value = v;
+                value = v;
                 this.t = t;
             }
 
@@ -552,27 +532,22 @@ namespace VectorTerrain.Scripts.Types
             {
                 return $"{t} : {value}";
             }
-
-        
         }
-
     }
 
     public class PosMarker
     {
-        public Vertex2 vert;
-
         public int markerType;
+        public Vertex2 vert;
 
         // public float absoluteT;
         // public float localizedT;
-    
+
         public PosMarker(int markerType)
         {
             this.markerType = markerType;
-
         }
-    
+
         public PosMarker(int MarkerType, Vertex2 Vert)
         {
             vert = Vert;

@@ -7,13 +7,14 @@ namespace VectorTerrain.Scripts.Nodes.Weights
     {
         [Output(typeConstraint = TypeConstraint.Strict)]
         public SignalNoodle Output;
-        
+
         public float Get(Vector3 vectorSeed)
         {
             thisNodeSeedContainer.Increment();
             vectorSeed.z += TerrainGraphInput.zOffset;
             return Compute(vectorSeed);
         }
+
         protected abstract float Compute(Vector3 vectorSeed);
     }
 }

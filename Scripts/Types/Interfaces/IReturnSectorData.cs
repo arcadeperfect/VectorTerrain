@@ -7,4 +7,3 @@ namespace VectorTerrain.Scripts.Types.Interfaces
         SectorData GetSectorData(TerrainGraphInput thisInput);
     }
 }
-

@@ -1,0 +1,296 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8294590998085131919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01f8c1ec0b0e4d20bb07418c94be8386, type: 3}
+  m_Name: Output
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 248, y: -200}
+  ports:
+    keys:
+    - Input
+    values:
+    - _fieldName: Input
+      _node: {fileID: -8294590998085131919}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.SectorDataNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Output
+        node: {fileID: -1401951958218160539}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+  ID: -8292
+  nodePaused: 0
+--- !u!114 &-6447253036127042618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 751eed70ffd446c89d7d1ddd839b515d, type: 3}
+  m_Name: Rotate Algo
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -456, y: -232}
+  ports:
+    keys:
+    - signal
+    - seedMult
+    - rotation
+    - magnitude
+    - output
+    - weight
+    values:
+    - _fieldName: signal
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.SignalNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Output
+        node: {fileID: -4732793809696885727}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+    - _fieldName: seedMult
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.FloatNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+    - _fieldName: rotation
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.FloatNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+    - _fieldName: magnitude
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.FloatNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+    - _fieldName: output
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.AlgorithmNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: algorithm
+        node: {fileID: -1401951958218160539}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: weight
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.WeightNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+  ID: -9730
+  weight:
+    value: 1
+    port:
+      _fieldName: weight
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.WeightNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+  signal:
+    value: 0
+    port:
+      _fieldName: signal
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.SignalNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Output
+        node: {fileID: -4732793809696885727}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+  signalOffset: 2.4
+  seedMult:
+    value: 52.55
+    port:
+      _fieldName: seedMult
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.FloatNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+  rotation:
+    value: 147.7
+    port:
+      _fieldName: rotation
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.FloatNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+  rotationOffset: 0
+  magnitude:
+    value: 0.49
+    port:
+      _fieldName: magnitude
+      _node: {fileID: -6447253036127042618}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.FloatNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+--- !u!114 &-4732793809696885727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Simple Fast Noise
+  m_EditorClassIdentifier: Assembly-CSharp:Nodez.Nodes.Generators:SimpleFastNoiseNode
+  graph: {fileID: 11400000}
+  position: {x: -872, y: -200}
+  ports:
+    keys:
+    - Output
+    values:
+    - _fieldName: Output
+      _node: {fileID: -4732793809696885727}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.SignalNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: signal
+        node: {fileID: -6447253036127042618}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 2
+      _dynamic: 0
+  ID: -8808
+  Output:
+    value: 0
+    port:
+      _fieldName: 
+      _node: {fileID: 0}
+      _typeQualifiedName: 
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  noiseType: 4
+  frequency: 50.19
+  Mult: {x: 2029.04, y: 2029.04, z: 2029.04}
+  Offset: {x: 0, y: 0, z: 0}
+--- !u!114 &-1401951958218160539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4561d94601445feb623533dc667a374, type: 3}
+  m_Name: Geometry Generator
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -200, y: -280}
+  ports:
+    keys:
+    - algorithm
+    - Output
+    values:
+    - _fieldName: algorithm
+      _node: {fileID: -1401951958218160539}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.AlgorithmNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: output
+        node: {fileID: -6447253036127042618}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 0
+    - _fieldName: Output
+      _node: {fileID: -1401951958218160539}
+      _typeQualifiedName: VectorTerrain.Scripts.Types.SectorDataNoodle, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Input
+        node: {fileID: -8294590998085131919}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ID: -10818
+  LimitPoints: 1
+  maxPoints: 1635
+  LimitDistance: 0
+  maxDistance: 1000
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ace9f08e34a1aef4eb9b6bb5ac33a0c0, type: 3}
+  m_Name: Terrain Graph
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -8294590998085131919}
+  - {fileID: -4732793809696885727}
+  - {fileID: -6447253036127042618}
+  - {fileID: -1401951958218160539}
+  startPoints: 0
+  startDist: 0

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nodez;
 using Nodez.Nodes;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 using VectorTerrain.Scripts;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
-
+using VectorTerrain.Scripts.Types.Exceptions;
 
 [ExecuteAlways]
 public class TerrainTester : SerializedMonoBehaviour
@@ -19,17 +19,10 @@ public class TerrainTester : SerializedMonoBehaviour
     [Required] public TerrainGraph terrainGraph;
     public int seed;
     public int sectors;
+    private bool _initted;
     private Dictionary<int, SectorController> _sectorDict;
-    private bool _initted = false;
 
     public Action SectorGenerationDone;
-
-    private void OnValidate()
-    {
-        if (!active)
-            return;
-        Process();
-    }
 
     private void OnEnable()
     {
@@ -38,18 +31,25 @@ public class TerrainTester : SerializedMonoBehaviour
         Init();
     }
 
-    private void OnDestroy()
-    {
-        UnInit();
-    }
-
     private void OnDisable()
     {
         UnInit();
     }
 
+    private void OnDestroy()
+    {
+        UnInit();
+    }
+
+    private void OnValidate()
+    {
+        if (!active)
+            return;
+        Process();
+    }
+
     [Button]
-    void ReInit()
+    private void ReInit()
     {
         if (!active)
             return;
@@ -60,11 +60,13 @@ public class TerrainTester : SerializedMonoBehaviour
 
     public void Init()
     {
+        Debug.Log("botty");
         if (!active)
             return;
-
+        Debug.Log("batty");
+        
         UnInit();
-        _sectorDict = new();
+        _sectorDict = new Dictionary<int, SectorController>();
 
         if (!ValidateVariables())
             return;
@@ -79,7 +81,7 @@ public class TerrainTester : SerializedMonoBehaviour
         _initted = true;
     }
 
-    void UnInit()
+    private void UnInit()
     {
         if (!active)
             return;
@@ -97,29 +99,24 @@ public class TerrainTester : SerializedMonoBehaviour
 
     private bool ValidateVariables()
     {
-        if (terrainGraph != null)
-        {
-            foreach (var node in terrainGraph.nodes)
-            {
-                if (node.GetType() == typeof(OutputNode))
-                    return true;
-            }
+        // check for terrainGraph
+        if (terrainGraph == null) throw new NoGraphException("Terrain Tester");
+        
+        // check graph for output node
+        foreach (var node in terrainGraph.nodes)
+            if (node.GetType() == typeof(OutputNode))
+                return true;
 
-            Debug.Log("no output node fuckface");
-            return false;
-        }
-
-        print("connect a terrainGraph fuckface");
-        return false;
+        throw new NoOutputNodeException();
     }
 
-    void OnGraphUpdate()
+    private void OnGraphUpdate()
     {
         SectorGenerationDone?.Invoke();
         Process();
     }
 
-    void Process()
+    private void Process()
     {
         if (!active)
             return;
@@ -129,36 +126,28 @@ public class TerrainTester : SerializedMonoBehaviour
     [Button]
     public void GenerateSectors()
     {
-        Globals.GlobalSeed = this.seed;
+        Globals.GlobalSeed = seed;
         DestroyAllSectorControllers();
 
-        if (!_initted)
-        {
-            print("not initted fuckface");
-            return;
-        }
-
+        if (!_initted) throw new TerrainExceptions.NotInitialisedException("Terrain Tester");
+        
         {
             var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(0, 0));
             _sectorDict[0] = SectorController.New(terrainGraphOutput, transform, visualiserConfig);
         }
-        
-        for (int i = 1; i < sectors; i++)
+
+        for (var i = 1; i < sectors; i++)
         {
             var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(_sectorDict[i - 1]));
             _sectorDict[i] = SectorController.New(terrainGraphOutput, transform, visualiserConfig);
         }
-
         
         SectorGenerationDone?.Invoke();
     }
-
+    
     private void DestroyAllSectorControllers()
     {
-        foreach (var sc in GameObject.FindObjectsOfType<SectorController>())
-        {
-            sc.DestroyMe();
-        }
+        foreach (var sc in FindObjectsOfType<SectorController>()) sc.DestroyMe();
     }
 
     private TerrainGraphOutput GetDataFromGraph(TerrainGraphInput data)
@@ -178,31 +167,34 @@ public class VisualiserConfig
     public bool DrawSegmentNormals;
     public bool DrawVerts;
     public bool DrawGrass;
-    [Space]
-    public bool DrawPlots;
+
+    [Space] public bool DrawPlots;
+
     public bool DrawSignalPlots;
     public bool DrawWeightPlots;
     public bool DrawMaskPlots;
     public bool DrawFloatPlots;
-    [Space]
-    public Color TerrainColor;
+
+    [Space] public Color TerrainColor;
+
     public Color TargetsColor;
     public Color VertexNormalsColor;
     public Color SegmentNormalsColor;
     public Color VertsColor;
     public Color GrassColor;
-    [Space] 
-    public Color SignalPlotsColor;
+
+    [Space] public Color SignalPlotsColor;
+
     public Color WeightPlotsColor;
     public Color MaskPlotsColor;
     public Color FloatPlotsColor;
 
-    [Space] 
-    public float TargetsScale = 1;
+    [Space] public float TargetsScale = 1;
+
     public float VertexNormalsScale = 1;
     public float SegmentNormalsScale = 1;
     public float VertsScale = 1;
-    public float plotYScale =1;
-    [Space] 
-    public float GrassDensity;
+    public float plotYScale = 1;
+
+    [Space] public float GrassDensity;
 }

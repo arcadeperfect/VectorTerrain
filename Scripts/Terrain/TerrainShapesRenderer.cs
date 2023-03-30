@@ -16,25 +16,24 @@ namespace Terrain
 
         public void Init(SectorData sectorData)
         {
-            if(pl == null)
+            if (pl == null)
                 pl = gameObject.AddComponent<Polyline>();
             pl.Joins = PolylineJoins.Round;
             pl.Geometry = PolylineGeometry.Billboard;
             PopulatePolyLine(sectorData);
         }
-    
+
         private void PopulatePolyLine(SectorData sectorData)
         {
             pl.points.Clear();
-        
-            foreach (Vertex2 vert in sectorData.Verts)
+
+            foreach (var vert in sectorData.Verts)
             {
-                var thisPoint = new PolylinePoint(vert.Pos, vert.Color,vert.thickness);
-            
+                var thisPoint = new PolylinePoint(vert.Pos, vert.Color, vert.thickness);
+
                 pl.points.Add(thisPoint);
-            
             }
-        
+
             SetGlobalThickness(0.1f);
             pl.Closed = false;
             pl.meshOutOfDate = true;
@@ -44,6 +43,5 @@ namespace Terrain
         {
             pl.Thickness = thicc;
         }
-
     }
 }

@@ -14,6 +14,7 @@ namespace VectorTerrain.Scripts.Nodes.Floats
             vectorSeed.z += TerrainGraphInput.zOffset;
             return Compute(vectorSeed);
         }
+
         protected abstract float Compute(Vector3 vectorSeed);
     }
 }
