@@ -7,21 +7,24 @@ using UnityEngine;
 using VectorTerrain.Scripts;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
+using VectorTerrain.Scripts.Terrain;
 using VectorTerrain.Scripts.Types.Exceptions;
 
 [ExecuteAlways]
 public class TerrainTester : SerializedMonoBehaviour
 {
-    public bool active;
-
-    public VisualiserConfig visualiserConfig;
-
     [Required] public TerrainGraph terrainGraph;
+
+    public bool active;
+    public VisualiserConfig visualiserConfig;
     public int seed;
     public int sectors;
+    
     private bool _initted;
     private Dictionary<int, SectorController> _sectorDict;
-
+    private TerrainContainerManager _terrainContainerManager;
+    private Transform _terrainContainer;
+    
     public Action SectorGenerationDone;
 
     private void OnEnable()
@@ -60,12 +63,19 @@ public class TerrainTester : SerializedMonoBehaviour
 
     public void Init()
     {
-        Debug.Log("botty");
         if (!active)
             return;
-        Debug.Log("batty");
         
         UnInit();
+
+        
+        
+        _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
+        if (_terrainContainerManager == null)
+            _terrainContainerManager = gameObject.AddComponent<TerrainContainerManager>();
+
+        _terrainContainer = _terrainContainerManager.Init();
+        
         _sectorDict = new Dictionary<int, SectorController>();
 
         if (!ValidateVariables())
@@ -110,6 +120,11 @@ public class TerrainTester : SerializedMonoBehaviour
         throw new NoOutputNodeException();
     }
 
+    private void InitTerrainContainer()
+    {
+        
+    }
+
     private void OnGraphUpdate()
     {
         SectorGenerationDone?.Invoke();
@@ -133,13 +148,13 @@ public class TerrainTester : SerializedMonoBehaviour
         
         {
             var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(0, 0));
-            _sectorDict[0] = SectorController.New(terrainGraphOutput, transform, visualiserConfig);
+            _sectorDict[0] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
         }
 
         for (var i = 1; i < sectors; i++)
         {
             var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(_sectorDict[i - 1]));
-            _sectorDict[i] = SectorController.New(terrainGraphOutput, transform, visualiserConfig);
+            _sectorDict[i] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
         }
         
         SectorGenerationDone?.Invoke();

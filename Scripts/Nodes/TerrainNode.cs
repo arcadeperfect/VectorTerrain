@@ -28,7 +28,6 @@ namespace VectorTerrain.Scripts.Nodes
         protected TerrainGraphInput TerrainGraphInput => Graph.terrainGraphInput;
         protected float BeginDist => TerrainGraphInput.totalDistanceSoFar;
         public float BeginPoints => TerrainGraphInput.totalPointsSoFar;
-
         public Vector3 VectorSeed => SeedContainer.vectorSeed;
 
         public virtual void OnDestroy()
@@ -120,6 +119,8 @@ namespace VectorTerrain.Scripts.Nodes
             }
         }
 
+        
+        
         protected virtual void OnGenerationStart()
         {
             InitNoodles(); //todo do I need to do this every time?
