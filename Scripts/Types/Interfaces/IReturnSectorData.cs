@@ -1,4 +1,6 @@
-﻿namespace VectorTerrain.Scripts.Types.Interfaces
+﻿using VectorTerrain.Scripts.Graph;
+
+namespace VectorTerrain.Scripts.Types.Interfaces
 {
     public interface IReturnSectorData
     {

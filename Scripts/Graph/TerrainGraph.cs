@@ -8,7 +8,7 @@ using VectorTerrain.Scripts.Nodes;
 using VectorTerrain.Scripts.Types;
 using XNode;
 
-namespace Nodez
+namespace VectorTerrain.Scripts.Graph
 {
 	[CreateAssetMenu(fileName = "Terrain Graph", menuName = "Nodez/Terrain Graph")]
 	public class TerrainGraph : NodeGraph {

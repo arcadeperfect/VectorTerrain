@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Types;
 using Random = System.Random;
 

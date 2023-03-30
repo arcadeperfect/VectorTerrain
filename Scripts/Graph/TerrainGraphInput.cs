@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using Terrain;
 using UnityEngine;
+using VectorTerrain.Scripts.Sector;
 using VectorTerrain.Scripts.Types;
 
-
-public struct TerrainGraphInput
+namespace VectorTerrain.Scripts.Graph
+{
+    public struct TerrainGraphInput
     {
         // public InitialStateContainer initialStateContainer;
         public Vertex2 StartPos;
@@ -76,12 +78,12 @@ public struct TerrainGraphInput
     }
 
 
-public struct SeedObject
-{
-    public float x;
-    public float y;
-    public float z;
-}
+    public struct SeedObject
+    {
+        public float x;
+        public float y;
+        public float z;
+    }
 
 
     // public class VisualisationPlotContainer
@@ -112,3 +114,4 @@ public struct SeedObject
     //         this.ZOffset = ZOffset;
     //     }
     // }
+}

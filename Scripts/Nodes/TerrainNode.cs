@@ -6,6 +6,7 @@ using Sirenix.Utilities;
 using Terrain;
 using Unity.VisualScripting;
 using UnityEngine;
+using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Nodes.Floats;
 using VectorTerrain.Scripts.Nodes.Weights;
 using VectorTerrain.Scripts.Types;
