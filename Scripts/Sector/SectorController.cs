@@ -50,7 +50,8 @@ namespace VectorTerrain.Scripts.Sector
                 sectorData.Verts[i] = v;
             }
 
-            shapesRenderer.Init(sectorData);
+            var settings = new PolyLineRenderSettings(VectorTerrainGlobals.PolylineGeometry);
+            shapesRenderer.Init(sectorData, settings);
         }
 
         // public static SectorController New(TerrainGraphOutput graphOutput, Transform parent)
@@ -82,8 +83,7 @@ namespace VectorTerrain.Scripts.Sector
             controller.pointCounter = graphOutput.totalPointsAtEnd;
             // controller.Plotz = graphOutput.PlotListDict;
             controller.Prefabs = InstantiatePrefabs(graphOutput);
-            controller.graphOutput =
-                graphOutput; // todo just pass in this and be done with it, do not pass in all those variables above one by one. Also don't pass in the sectordata twice.
+            controller.graphOutput = graphOutput; // todo just pass in this and be done with it, do not pass in all those variables above one by one. Also don't pass in the sectordata twice.
             controller.grassRenderer = controller.AddComponent<TerrainGrassRenderer>();
             controller.BottyPlot = new List<Plot>(graphOutput.plotList);
 
@@ -216,7 +216,8 @@ namespace VectorTerrain.Scripts.Sector
             endPositionObj.transform.position = sectorData.LocalEnd;
 
             shapesRenderer = gameObject.AddComponent<TerrainShapesRenderer>();
-            shapesRenderer.Init(this.sectorData);
+            var settings = new PolyLineRenderSettings(VectorTerrainGlobals.PolylineGeometry);
+            shapesRenderer.Init(this.sectorData, settings);
         }
 
         private static void ValidateSectorData(SectorData sectorData)

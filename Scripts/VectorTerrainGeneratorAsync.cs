@@ -9,7 +9,7 @@ using VectorTerrain.Scripts.Terrain;
 
 namespace VectorTerrain.Scripts
 {
-    public class WorldGeneratorAsync : MonoBehaviour
+    public class VectorTerrainGeneratorAsync : MonoBehaviour
     {
         public TerrainGraph graph;
         public Dictionary<int, SectorController> SectorDict { get => _sectorControllerDict; }
@@ -19,11 +19,14 @@ namespace VectorTerrain.Scripts
         private Dictionary<int, Task> taskz;
         private Transform _terrainContainer;
         private TerrainContainerManager _terrainContainerManager;
+        private TerrainShapesRenderSettings _terrainShapesRenderSettings;
         
         [Button]
-        async void Init(int seed)
+        public async void Init(int seed)
         {
             graph.InitNodeIDs();
+            
+            _terrainShapesRenderSettings = gameObject.GetComponent<TerrainShapesRenderSettings>();
         
             _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
             if (_terrainContainerManager == null)
@@ -31,11 +34,11 @@ namespace VectorTerrain.Scripts
 
             _terrainContainer = _terrainContainerManager.Init();
             
-            Globals.GlobalSeed = seed;
+            VectorTerrainGlobals.GlobalSeed = seed;
             inputDict = new();
             _sectorControllerDict = new();
             taskz = new();
-            Globals.GlobalSeed = seed;
+            VectorTerrainGlobals.GlobalSeed = seed;
         
             DestroyAllSectors();
         
@@ -53,7 +56,7 @@ namespace VectorTerrain.Scripts
         }
 
         [Button]
-        void Advance()
+        public void Advance()
         {
             int taskID;
             if (taskz.Count == 0) taskID = 0;
@@ -62,7 +65,7 @@ namespace VectorTerrain.Scripts
         }
 
         [Button]
-        void Subvance()
+        public void Subvance()
         {
             int taskID;
             if (taskz.Count == 0) taskID = 0;
@@ -86,9 +89,10 @@ namespace VectorTerrain.Scripts
             }
             else
                 input = new TerrainGraphInput(_sectorControllerDict[HighestGeneration()]);
+            
             await InstantiateSector(input);
+            
             DestroyHeadSector();
-        
             taskz.Remove(id - 1);
         }
     
@@ -106,6 +110,7 @@ namespace VectorTerrain.Scripts
                 input = new TerrainGraphInput(_sectorControllerDict[LowestGeneration()]);
 
             await InstantiateSector(input);
+            
             DestroyTailSector();
 
             taskz.Remove(id - 1);
@@ -142,13 +147,9 @@ namespace VectorTerrain.Scripts
             var g = graph.Copy() as TerrainGraph;
             var graphOutput = await Task.Run(()=>g.GetGraphOutput(input, false));
             var newSectorController = SectorController.New(graphOutput, _terrainContainer, new VisualiserConfig());
-
-            // Debug.Log(input.generation);
-        
+            
             _sectorControllerDict[newSectorController.Generation] = newSectorController;
-        
-            // Debug.Log(newSectorController.Generation);
-        
+            
             if(!inputDict.Keys.Contains(newSectorController.Generation))
                 inputDict[newSectorController.Generation] = input;
         
@@ -173,6 +174,5 @@ namespace VectorTerrain.Scripts
                 sc.DestroyMe();
             }
         }
-    
     }
 }

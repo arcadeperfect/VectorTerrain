@@ -139,7 +139,7 @@ namespace VectorTerrain.Scripts.Graph
             SetSeeds(input.seedDict);
             Generation = input.generation;
             var backwards = input.generation < 0; // if we are going backwards from the origin
-            GlobalSeed = Globals.GlobalSeed;
+            GlobalSeed = VectorTerrainGlobals.GlobalSeed;
 
             if (backwards) GlobalSeed += 123;
             if (backwards) terrainGraphInput.StartVector.x *= -1f;

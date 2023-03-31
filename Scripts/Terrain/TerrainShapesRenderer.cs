@@ -14,12 +14,12 @@ namespace Terrain
         public Polyline pl;
         // public Polygon pg;  //todo not implemented
 
-        public void Init(SectorData sectorData)
+        public void Init(SectorData sectorData, PolyLineRenderSettings settings)
         {
             if (pl == null)
                 pl = gameObject.AddComponent<Polyline>();
             pl.Joins = PolylineJoins.Round;
-            pl.Geometry = PolylineGeometry.Billboard;
+            pl.Geometry = settings.Geometry;
             PopulatePolyLine(sectorData);
         }
 
@@ -44,4 +44,15 @@ namespace Terrain
             pl.Thickness = thicc;
         }
     }
+
+    public class PolyLineRenderSettings
+    {
+        public PolylineGeometry Geometry;
+        
+        public PolyLineRenderSettings(PolylineGeometry geometry)
+        {
+            Geometry = geometry;
+        }
+    }
+    
 }
