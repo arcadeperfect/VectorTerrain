@@ -145,7 +145,7 @@ MonoBehaviour:
       _dynamic: 0
   signalOffset: 2.4
   seedMult:
-    value: 52.55
+    value: 64.8
     port:
       _fieldName: seedMult
       _node: {fileID: -6447253036127042618}
@@ -157,7 +157,7 @@ MonoBehaviour:
       _typeConstraint: 2
       _dynamic: 0
   rotation:
-    value: 147.7
+    value: 163.8
     port:
       _fieldName: rotation
       _node: {fileID: -6447253036127042618}
@@ -168,7 +168,7 @@ MonoBehaviour:
       _connectionType: 1
       _typeConstraint: 2
       _dynamic: 0
-  rotationOffset: 0
+  rotationOffset: -311.3
   magnitude:
     value: 0.49
     port:
@@ -224,7 +224,7 @@ MonoBehaviour:
       _typeConstraint: 0
       _dynamic: 0
   noiseType: 4
-  frequency: 50.19
+  frequency: 0.25
   Mult: {x: 2029.04, y: 2029.04, z: 2029.04}
   Offset: {x: 0, y: 0, z: 0}
 --- !u!114 &-1401951958218160539
@@ -272,9 +272,9 @@ MonoBehaviour:
       _dynamic: 0
   ID: -10818
   LimitPoints: 1
-  maxPoints: 1635
+  maxPoints: 1841
   LimitDistance: 0
-  maxDistance: 1000
+  maxDistance: 1004.06
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

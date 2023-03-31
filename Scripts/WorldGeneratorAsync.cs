@@ -5,24 +5,32 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
+using VectorTerrain.Scripts.Terrain;
 
-namespace VectorTerrain.Scripts.WorldGenerator
+namespace VectorTerrain.Scripts
 {
     public class WorldGeneratorAsync : MonoBehaviour
     {
         public TerrainGraph graph;
+        public Dictionary<int, SectorController> SectorDict { get => _sectorControllerDict; }
+        
         private Dictionary<int, TerrainGraphInput> inputDict;
         private Dictionary<int,SectorController> _sectorControllerDict;
-
-        public Dictionary<int, SectorController> SectorDict { get => _sectorControllerDict; }
-
         private Dictionary<int, Task> taskz;
-
+        private Transform _terrainContainer;
+        private TerrainContainerManager _terrainContainerManager;
+        
         [Button]
         async void Init(int seed)
         {
             graph.InitNodeIDs();
         
+            _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
+            if (_terrainContainerManager == null)
+                _terrainContainerManager = gameObject.AddComponent<TerrainContainerManager>();
+
+            _terrainContainer = _terrainContainerManager.Init();
+            
             Globals.GlobalSeed = seed;
             inputDict = new();
             _sectorControllerDict = new();
@@ -133,7 +141,7 @@ namespace VectorTerrain.Scripts.WorldGenerator
 
             var g = graph.Copy() as TerrainGraph;
             var graphOutput = await Task.Run(()=>g.GetGraphOutput(input, false));
-            var newSectorController = SectorController.New(graphOutput, transform, new VisualiserConfig());
+            var newSectorController = SectorController.New(graphOutput, _terrainContainer, new VisualiserConfig());
 
             // Debug.Log(input.generation);
         
