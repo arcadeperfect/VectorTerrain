@@ -33,6 +33,7 @@ namespace VectorTerrain.Scripts.Sector
         private List<GameObject> Prefabs;
 
         private TerrainShapesRenderer shapesRenderer;
+        private SectorColliderController colliderController;
         public Transform Start => startPositionObj.transform;
         public Transform End => endPositionObj.transform;
 
@@ -218,6 +219,10 @@ namespace VectorTerrain.Scripts.Sector
             shapesRenderer = gameObject.AddComponent<TerrainShapesRenderer>();
             var settings = new PolyLineRenderSettings(VectorTerrainGlobals.PolylineGeometry);
             shapesRenderer.Init(this.sectorData, settings);
+            
+            colliderController = gameObject.AddComponent<SectorColliderController>();
+            var colliderSettings = new SectorColliderSettings();
+            colliderController.Init(this.sectorData, colliderSettings);
         }
 
         private static void ValidateSectorData(SectorData sectorData)

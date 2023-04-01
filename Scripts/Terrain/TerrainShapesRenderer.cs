@@ -16,8 +16,7 @@ namespace Terrain
 
         public void Init(SectorData sectorData, PolyLineRenderSettings settings)
         {
-            if (pl == null)
-                pl = gameObject.AddComponent<Polyline>();
+            if (pl == null) pl = gameObject.AddComponent<Polyline>();
             pl.Joins = PolylineJoins.Round;
             pl.Geometry = settings.Geometry;
             PopulatePolyLine(sectorData);

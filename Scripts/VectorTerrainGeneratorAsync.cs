@@ -12,15 +12,30 @@ namespace VectorTerrain.Scripts
     public class VectorTerrainGeneratorAsync : MonoBehaviour
     {
         public TerrainGraph graph;
-        public Dictionary<int, SectorController> SectorDict { get => _sectorControllerDict; }
-        
+
         private Dictionary<int, TerrainGraphInput> inputDict;
-        private Dictionary<int,SectorController> _sectorControllerDict;
+        
+        public Dictionary<int,SectorController> _sectorControllerDict;
+        public Dictionary<int, SectorController> SectorDict { get => _sectorControllerDict; }
+
         private Dictionary<int, Task> taskz;
         private Transform _terrainContainer;
         private TerrainContainerManager _terrainContainerManager;
         private TerrainShapesRenderSettings _terrainShapesRenderSettings;
-        
+
+        private bool _initted = false;
+        public bool Initted { get => _initted; }
+
+
+        public SectorController middleSectorController
+        {
+            get
+            {
+                int middleKey = _sectorControllerDict.Keys.ToList().OrderBy(x => x).ToList()[_sectorControllerDict.Count / 2];
+                return _sectorControllerDict[middleKey];
+            }
+        }
+
         [Button]
         public async void Init(int seed)
         {
@@ -53,6 +68,7 @@ namespace VectorTerrain.Scripts
             var previousSectorController = await InstantiateSector(input2); // generate forwards sector from blank initial state
         
             await InstantiateSector(new TerrainGraphInput(previousSectorController)); // generate 2nd forward sector from previous forward sector
+            _initted = true;
         }
 
         [Button]

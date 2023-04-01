@@ -11,7 +11,7 @@ using VectorTerrain.Scripts.Terrain;
 using VectorTerrain.Scripts.Types.Exceptions;
 
 [ExecuteAlways]
-public class TerrainTester : SerializedMonoBehaviour
+public class TerrainTester : MonoBehaviour
 {
     [Required] public TerrainGraph terrainGraph;
 
@@ -141,7 +141,9 @@ public class TerrainTester : SerializedMonoBehaviour
     [Button]
     public void GenerateSectors()
     {
-        Globals.GlobalSeed = seed;
+        Debug.Log("botty");
+        
+        VectorTerrainGlobals.GlobalSeed = seed;
         DestroyAllSectorControllers();
 
         if (!_initted) throw new TerrainExceptions.NotInitialisedException("Terrain Tester");
