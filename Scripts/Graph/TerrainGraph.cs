@@ -89,9 +89,10 @@ namespace VectorTerrain.Scripts.Graph
 
         public bool SetSeeds(Dictionary<string, SeedContainer> newSeedsDict)
         {
-            // Debug.Log("dict count " + newSeedsDict.Count);
-
             foreach (var node in nodes)
+            {
+                // if(node == null) continue;
+                if(node==null) Application.Quit();
                 if (node.GetType().InheritsFrom(typeof(TerrainNode)))
                 {
                     var terrainNode = node as TerrainNode;
@@ -107,6 +108,7 @@ namespace VectorTerrain.Scripts.Graph
                     else
                         throw new GuidMismatchException();
                 }
+            }
             return true;
         }
 
