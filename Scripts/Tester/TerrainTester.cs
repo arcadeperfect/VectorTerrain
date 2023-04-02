@@ -15,7 +15,6 @@ public class TerrainTester : MonoBehaviour
 {
     [Required] public TerrainGraph terrainGraph;
 
-    public bool active;
     public VisualiserConfig visualiserConfig;
     public int seed;
     public int sectors;
@@ -27,11 +26,17 @@ public class TerrainTester : MonoBehaviour
     
     public Action SectorGenerationDone;
 
-    private void OnEnable()
+    // private void OnEnable()
+    // {
+    //     terrainGraph.NodesChanged -= Init;
+    //     terrainGraph.NodesChanged += Init;
+    //     Init();
+    // }
+
+    private void Start()
     {
-        terrainGraph.NodesChanged -= Init;
-        terrainGraph.NodesChanged += Init;
         Init();
+        Process();
     }
 
     private void OnDisable()
@@ -44,18 +49,18 @@ public class TerrainTester : MonoBehaviour
         UnInit();
     }
 
-    private void OnValidate()
-    {
-        if (!active)
-            return;
-        Process();
-    }
+    // private void OnValidate()
+    // {
+    //     // if (!active)
+    //     //     return;
+    //     Process();
+    // }
 
     [Button]
     private void ReInit()
     {
-        if (!active)
-            return;
+        // if (!active)
+        //     return;
 
         UnInit();
         Init();
@@ -63,8 +68,8 @@ public class TerrainTester : MonoBehaviour
 
     public void Init()
     {
-        if (!active)
-            return;
+        // if (!active)
+        //     return;
         
         UnInit();
 
@@ -93,8 +98,8 @@ public class TerrainTester : MonoBehaviour
 
     private void UnInit()
     {
-        if (!active)
-            return;
+        // if (!active)
+        //     return;
 
         if (!ValidateVariables())
             return;
@@ -119,12 +124,7 @@ public class TerrainTester : MonoBehaviour
 
         throw new NoOutputNodeException();
     }
-
-    private void InitTerrainContainer()
-    {
-        
-    }
-
+    
     private void OnGraphUpdate()
     {
         SectorGenerationDone?.Invoke();
@@ -133,20 +133,19 @@ public class TerrainTester : MonoBehaviour
 
     private void Process()
     {
-        if (!active)
-            return;
+        // if (!active)
+        //     return;
         GenerateSectors();
     }
 
     [Button]
     public void GenerateSectors()
     {
-        Debug.Log("botty");
-        
         VectorTerrainGlobals.GlobalSeed = seed;
         DestroyAllSectorControllers();
 
-        if (!_initted) throw new TerrainExceptions.NotInitialisedException("Terrain Tester");
+        // if (!_initted) throw new TerrainExceptions.NotInitialisedException("Terrain Tester");
+        if (!_initted) return;
         
         {
             var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(0, 0));

@@ -91,8 +91,8 @@ namespace VectorTerrain.Scripts.Graph
         {
             foreach (var node in nodes)
             {
-                // if(node == null) continue;
-                if(node==null) Application.Quit();
+                if(node == null) continue;
+                // if(node==null) Application.Quit();
                 if (node.GetType().InheritsFrom(typeof(TerrainNode)))
                 {
                     var terrainNode = node as TerrainNode;
