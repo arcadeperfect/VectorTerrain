@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
@@ -9,7 +10,7 @@ using VectorTerrain.Scripts.Terrain;
 
 namespace VectorTerrain.Scripts
 {
-    public class VectorTerrainGeneratorAsync : MonoBehaviour, ITerrainGenerator
+    public class VectorTerrainGenerator : MonoBehaviour, ITerrainGenerator
     {
         public TerrainGraph graph;
 
@@ -34,11 +35,11 @@ namespace VectorTerrain.Scripts
                 return _sectorControllerDict[middleKey];
             }
         }
-        public async void Init(int seed)
+        public void Init(int seed)
         {
-            Debug.Log("Initializing VectorTerrainGeneratorAsync");
-            
-            if(graph == null) throw new Exception("No graph assigned to VectorTerrainGeneratorAsync");
+            Debug.Log("Initializing VectorTerrainGenerator");
+
+            if(graph == null) throw new Exception("No graph assigned to VectorTerrainGenerator");
             
             graph.InitNodeIDs();
             _terrainShapesRenderSettings = gameObject.GetComponent<TerrainShapesRenderSettings>();
@@ -51,28 +52,34 @@ namespace VectorTerrain.Scripts
             VectorTerrainGlobals.GlobalSeed = seed;
             inputDict = new();
             _sectorControllerDict = new();
-            taskz = new();
-            VectorTerrainGlobals.GlobalSeed = seed;
             DestroyAllSectors();
             float zOffset = 0;
             var input1 = new TerrainGraphInput(-1, zOffset);
             var input2 = new TerrainGraphInput(0, zOffset);
-            await InstantiateSector(input1); // generate backwards sector from blank initial state, then move on
-            var previousSectorController = await InstantiateSector(input2); // generate forwards sector from blank initial state
-            await InstantiateSector(new TerrainGraphInput(previousSectorController)); // generate 2nd forward sector from previous forward sector
+            InstantiateSector(input1); // generate backwards sector from blank initial state, then move on
+            var previousSectorController = InstantiateSector(input2); // generate forwards sector from blank initial state
+            InstantiateSector(new TerrainGraphInput(previousSectorController)); // generate 2nd forward sector from previous forward sector
             _initted = true;
         }
         public void Advance()
         {
             if (!_initted)
             {
-                Debug.Log("Adbvance attempted before init");
+                Debug.Log("Advance attempted before init");
                 return;
             }
-            int taskID;
-            if (taskz.Count == 0) taskID = 0;
-            else taskID = taskz.Keys.Max() + 1;
-            taskz[taskID] = AdvanceTask(taskID);
+
+            TerrainGraphInput input;
+
+            if (inputDict.Keys.Contains(HighestGeneration() + 1))
+            {
+                input = inputDict[HighestGeneration() + 1];
+            }
+            else
+                input = new TerrainGraphInput(_sectorControllerDict[HighestGeneration()]);
+            
+            InstantiateSector(input);
+            DestroyHeadSector();
         }
         public void Subvance()
         {
@@ -81,76 +88,26 @@ namespace VectorTerrain.Scripts
                 Debug.Log("Subvance attempted before init");
                 return;
             }
-            int taskID;
-            if (taskz.Count == 0) taskID = 0;
-            else taskID = taskz.Keys.Max() + 1;
-            taskz[taskID] = SubvanceTask(taskID);
-        }
-
-        async Task AdvanceTask(int id)
-        {
-            if (taskz.Keys.Contains(id - 1)) await taskz[id - 1];
-        
-            TerrainGraphInput input;
-
-            if (inputDict.Keys.Contains(HighestGeneration() + 1))
-            {
-                input = inputDict[HighestGeneration() + 1];
-            }
-            else
-            {
-                input = new TerrainGraphInput(_sectorControllerDict[HighestGeneration()]);
-            }
-
-            await InstantiateSector(input);
-            
-            DestroyHeadSector();
-            taskz.Remove(id - 1);
-        }
-    
-        async Task SubvanceTask(int id)
-        {
-            if (taskz.Keys.Contains(id - 1)) await taskz[id - 1];
             TerrainGraphInput input;
             if (inputDict.Keys.Contains(LowestGeneration() - 1))
                 input = inputDict[LowestGeneration() - 1];
             else
                 input = new TerrainGraphInput(_sectorControllerDict[LowestGeneration()]);
-
-            await InstantiateSector(input);
+            InstantiateSector(input);
             DestroyTailSector();
-            taskz.Remove(id - 1);
         }
-
-        private SectorController TailSector()
-        {
-            return _sectorControllerDict[_sectorControllerDict.Keys.Max()];
-        }
-    
-        SectorController HeadSector()
-        {
-            return _sectorControllerDict[_sectorControllerDict.Keys.Min()];
-        }
-
-        int HighestGeneration()
-        {
-            return TailSector().Generation;
-        }
-
-        int LowestGeneration()
-        {
-            return HeadSector().Generation;
-        }
-
-        async Task<SectorController> InstantiateSector(TerrainGraphInput input)
+        SectorController tailSector() => _sectorControllerDict[_sectorControllerDict.Keys.Max()];
+        SectorController headSector() => _sectorControllerDict[_sectorControllerDict.Keys.Min()];
+        int HighestGeneration() => tailSector().Generation;
+        int LowestGeneration() => headSector().Generation;
+        SectorController InstantiateSector(TerrainGraphInput input)
         {
             var g = graph.Copy() as TerrainGraph;
-            var graphOutput = await Task.Run(()=>g.GetGraphOutput(input, false));
+            var graphOutput = g.GetGraphOutput(input, false);
             var newSectorController = SectorController.New(graphOutput, _terrainContainer, new VisualiserConfig());
             _sectorControllerDict[newSectorController.Generation] = newSectorController;
             if(!inputDict.Keys.Contains(newSectorController.Generation))
                 inputDict[newSectorController.Generation] = input;
-        
             return newSectorController;
         }
         void DestroyTailSector()

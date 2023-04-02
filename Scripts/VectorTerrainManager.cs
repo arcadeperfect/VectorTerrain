@@ -8,73 +8,57 @@ using VectorTerrain.Scripts;
 
 public class VectorTerrainManager : MonoBehaviour
 {
-    private VectorTerrainGeneratorAsync generator;
-    public VectorTerrainGeneratorAsync Generator => generator;
+    // private VectorTerrainGeneratorAsync generator;
+    // public VectorTerrainGeneratorAsync Generator => generator;
 
+    // private VectorTerrainGenerator generator;
+    //
+    // private VectorTerrainGeneratorAsync generatorAsync;
+
+    
+    private ITerrainGenerator generator;
+    
     public Transform Focus;
     
     public int seed;
 
     // public float t;
+
+    public bool async;
     
     private float _advanceThreshold = 0.51f;
     
     private void Awake()
     {
-        generator = GetComponent<VectorTerrainGeneratorAsync>();
+        if(async)
+            generator = gameObject.GetComponent<VectorTerrainGeneratorAsync>() as ITerrainGenerator;
+        else
+            generator = gameObject.GetComponent<VectorTerrainGenerator>() as ITerrainGenerator;
+        
         generator.Init(seed);
     }
 
     private void LateUpdate()
     {
         if (!generator.Initted) return;
-
+    
         var activeSector = generator.middleSectorController;
         var begin = activeSector.sectorData.LocalStart.x;
         var end = activeSector.sectorData.LocalEnd.x;
-
+    
         // float d = (end - begin);
         // float buffer = d * 0.25f;
         
         var p = Focus.position.x;
+    
+        if(Input.GetKeyDown(KeyCode.S)) generator.Subvance();
+        if(Input.GetKeyDown(KeyCode.A)) generator.Advance();
+        
+        // if(p>end)
+        //     generator.Advance();
+        // else if(p<begin)
+        //     generator.Subvance();
 
-        if(p>end)
-            generator.Advance();
-        else if(p<begin)
-            generator.Subvance();
-        
-        
-        
-        // if(p < begin + buffer && p > begin)
-        //     return;
-        //
-        // if(p > end - buffer && p < end)
-        //     return;
-        //
-        // if (p > end - buffer)
-        // {
-        //     generator.Advance();
-        //     return;
-        // }
-        //
-        // if (p < begin + buffer)
-        // {
-        //     generator.Subvance();
-        //     return;
-        // }
-        
-        
-        // if(Math.Abs(p - b.x) < t || Math.Abs(p - e.x) < t)
-        //     return;
-        //
-        // if(p > b1 && p < e1)
-        //     return;
-        //
-        // if(p > e1)
-        //     generator.Advance();
-        // else if(p < b1)
-        //     generator.Subvance();
-        
     }
 
     private float SignedSimpleDist(float a, float b)

@@ -176,94 +176,94 @@ namespace VectorTerrain.Scripts.Nodes
             Graph.OnNodesUpdated();
         }
 
-        protected List<NodePort> GetSignalInputPorts()
-        {
-            List<NodePort> returnMe = new();
-            foreach (var port in Inputs)
-                if (port.ValueType == typeof(SignalNoodle))
-                    returnMe.Add(port);
-            return returnMe;
-        }
+        // protected List<NodePort> GetSignalInputPorts()
+        // {
+        //     List<NodePort> returnMe = new();
+        //     foreach (var port in Inputs)
+        //         if (port.ValueType == typeof(SignalNoodle))
+        //             returnMe.Add(port);
+        //     return returnMe;
+        // }
 
-        [Obsolete]
-        protected float GetSignal(Vector3 vectorSeed)
-        {
-            return GetSignal(0, vectorSeed);
-        }
+        // [Obsolete]
+        // protected float GetSignal(Vector3 vectorSeed)
+        // {
+        //     return GetSignal(0, vectorSeed);
+        // }
 
-        [Obsolete]
-        protected float GetSignal(int portIndex, Vector3 vectorSeed)
-        {
-            var port = GetSignalInputPorts()[portIndex];
-            return GetSignal(port, vectorSeed);
-        }
+        // [Obsolete]
+        // protected float GetSignal(int portIndex, Vector3 vectorSeed)
+        // {
+        //     var port = GetSignalInputPorts()[portIndex];
+        //     return GetSignal(port, vectorSeed);
+        // }
 
-        [Obsolete]
-        protected float GetSignal(string fieldName, Vector3 vectorSeed)
-        {
-            var port = GetPort(fieldName);
-            return GetSignal(port, vectorSeed);
-        }
+        // [Obsolete]
+        // protected float GetSignal(string fieldName, Vector3 vectorSeed)
+        // {
+        //     var port = GetPort(fieldName);
+        //     return GetSignal(port, vectorSeed);
+        // }
 
-        [Obsolete]
-        private float GetSignal(NodePort port, Vector3 vectorSeed)
-        {
-            if (port.IsConnected)
-            {
-                var signalNode = (ReturnSignalNode) port.Connection.node;
-                return signalNode.Get(vectorSeed);
-            }
+        // [Obsolete]
+        // private float GetSignal(NodePort port, Vector3 vectorSeed)
+        // {
+        //     if (port.IsConnected)
+        //     {
+        //         var signalNode = (ReturnSignalNode) port.Connection.node;
+        //         return signalNode.Get(vectorSeed);
+        //     }
+        //
+        //     var fieldInfo = GetType().GetField(port.fieldName);
+        //     var signalNoodle = fieldInfo.GetValue(this) as SignalNoodle;
+        //
+        //     if (signalNoodle != null) return signalNoodle.value;
+        //
+        //     throw new NullReferenceException("unable to find signalNoodle");
+        // }
 
-            var fieldInfo = GetType().GetField(port.fieldName);
-            var signalNoodle = fieldInfo.GetValue(this) as SignalNoodle;
+        // [Obsolete]
+        // public float GetFloat(string fieldName, Vector3 vectorSeed)
+        // {
+        //     var port = GetPort(fieldName);
+        //     return GetFloat(port, vectorSeed);
+        // }
 
-            if (signalNoodle != null) return signalNoodle.value;
+        // [Obsolete]
+        // private float GetFloat(NodePort port, Vector3 vectorSeed)
+        // {
+        //     if (port.IsConnected)
+        //     {
+        //         var floatNode = (ReturnFloatNode) port.Connection.node;
+        //         return floatNode.GetFloat(vectorSeed);
+        //     }
+        //
+        //     var fieldInfo = GetType().GetField(port.fieldName);
+        //     var floatNoodle = fieldInfo.GetValue(this) as FloatNoodle;
+        //
+        //     if (floatNoodle != null) return floatNoodle.value;
+        //
+        //     throw new NullReferenceException("unable to find signalNoodle");
+        // }
 
-            throw new NullReferenceException("unable to find signalNoodle");
-        }
-
-        [Obsolete]
-        public float GetFloat(string fieldName, Vector3 vectorSeed)
-        {
-            var port = GetPort(fieldName);
-            return GetFloat(port, vectorSeed);
-        }
-
-        [Obsolete]
-        private float GetFloat(NodePort port, Vector3 vectorSeed)
-        {
-            if (port.IsConnected)
-            {
-                var floatNode = (ReturnFloatNode) port.Connection.node;
-                return floatNode.GetFloat(vectorSeed);
-            }
-
-            var fieldInfo = GetType().GetField(port.fieldName);
-            var floatNoodle = fieldInfo.GetValue(this) as FloatNoodle;
-
-            if (floatNoodle != null) return floatNoodle.value;
-
-            throw new NullReferenceException("unable to find signalNoodle");
-        }
-
-        [Obsolete]
-        protected List<ReturnSignalNode> GetConnectedSignalInputNodes()
-        {
-            List<ReturnSignalNode> returnMe = new();
-            foreach (var input in Inputs)
-                if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(ReturnSignalNode)))
-                    returnMe.Add(input.Connection.node as ReturnSignalNode);
-            return returnMe;
-        }
-
-        protected List<IReturnSectorData> GetGeometryInputNodes()
-        {
-            List<IReturnSectorData> returnMe = new();
-            foreach (var input in Inputs)
-                if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
-                    returnMe.Add(input.Connection.node as IReturnSectorData);
-            return returnMe;
-        }
+        // [Obsolete]
+        // protected List<ReturnSignalNode> GetConnectedSignalInputNodes()
+        // {
+        //     List<ReturnSignalNode> returnMe = new();
+        //     foreach (var input in Inputs)
+        //         if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(ReturnSignalNode)))
+        //             returnMe.Add(input.Connection.node as ReturnSignalNode);
+        //     return returnMe;
+        // }
+        //
+        // protected List<IReturnSectorData> GetGeometryInputNodes()
+        // {
+        //     List<IReturnSectorData> returnMe = new();
+        //     foreach (var input in Inputs)
+        //         if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
+        //             returnMe.Add(input.Connection.node as IReturnSectorData);
+        //     return returnMe;
+        // }
 
         // protected List<NodePort> GetMaskInputPorts()
         // {
