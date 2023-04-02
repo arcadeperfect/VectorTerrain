@@ -5,7 +5,7 @@ namespace VectorTerrain.Scripts
     public interface ITerrainGenerator
     {
         public bool Initted { get; }
-        
+        public int taskCount { get; }
         public SectorController middleSectorController { get; }
         public void Init(int seed);
         

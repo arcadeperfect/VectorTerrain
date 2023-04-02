@@ -16,7 +16,9 @@ public class VectorTerrainManager : MonoBehaviour
     // private VectorTerrainGeneratorAsync generatorAsync;
 
     
-    private ITerrainGenerator generator;
+    // private ITerrainGenerator generator;
+
+    private VectorTerrainGeneratorAsync generator;
     
     public Transform Focus;
     
@@ -28,14 +30,15 @@ public class VectorTerrainManager : MonoBehaviour
     
     private float _advanceThreshold = 0.51f;
     
-    private void Awake()
+    private async void Awake()
     {
-        if(async)
-            generator = gameObject.GetComponent<VectorTerrainGeneratorAsync>() as ITerrainGenerator;
-        else
-            generator = gameObject.GetComponent<VectorTerrainGenerator>() as ITerrainGenerator;
+        // if(async)
+        //     generator = gameObject.GetComponent<VectorTerrainGeneratorAsync>() as ITerrainGenerator;
+        // else
+        //     generator = gameObject.GetComponent<VectorTerrainGenerator>() as ITerrainGenerator;
         
-        generator.Init(seed);
+        generator = gameObject.GetComponent<VectorTerrainGeneratorAsync>();
+        await generator.Init(seed);
     }
 
     private void LateUpdate()
@@ -51,14 +54,17 @@ public class VectorTerrainManager : MonoBehaviour
         
         var p = Focus.position.x;
     
-        if(Input.GetKeyDown(KeyCode.S)) generator.Subvance();
-        if(Input.GetKeyDown(KeyCode.A)) generator.Advance();
-        
-        // if(p>end)
-        //     generator.Advance();
-        // else if(p<begin)
-        //     generator.Subvance();
+        // if(Input.GetKeyDown(KeyCode.S)) generator.Subvance();
+        // if(Input.GetKeyDown(KeyCode.A)) generator.Advance();
 
+
+        Debug.Log(generator.AreTasksRunning());
+        if (generator.AreTasksRunning()) return;
+        
+        if(p>end)
+            generator.Advance();
+        else if(p<begin)
+            generator.Subvance();
     }
 
     private float SignedSimpleDist(float a, float b)

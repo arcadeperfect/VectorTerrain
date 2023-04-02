@@ -9,16 +9,19 @@ using VectorTerrain.Scripts.Terrain;
 
 namespace VectorTerrain.Scripts
 {
-    public class VectorTerrainGeneratorAsync : MonoBehaviour, ITerrainGenerator
+    public class VectorTerrainGeneratorAsync : MonoBehaviour
     {
+        public int taskCount { get => taskz.Count; }
+        
         public TerrainGraph graph;
 
         private Dictionary<int, TerrainGraphInput> inputDict;
         
-        public Dictionary<int,SectorController> _sectorControllerDict;
-        public Dictionary<int, SectorController> SectorDict { get => _sectorControllerDict; }
+        public Dictionary<int,SectorController> sectorControllerDict;
+        public Dictionary<int, SectorController> SectorDict { get => sectorControllerDict; }
 
         private Dictionary<int, Task> taskz;
+        private List<Task> activeTasks = new();
         private Transform _terrainContainer;
         private TerrainContainerManager _terrainContainerManager;
         private TerrainShapesRenderSettings _terrainShapesRenderSettings;
@@ -30,11 +33,11 @@ namespace VectorTerrain.Scripts
         {
             get
             {
-                int middleKey = _sectorControllerDict.Keys.ToList().OrderBy(x => x).ToList()[_sectorControllerDict.Count / 2];
-                return _sectorControllerDict[middleKey];
+                int middleKey = sectorControllerDict.Keys.ToList().OrderBy(x => x).ToList()[sectorControllerDict.Count / 2];
+                return sectorControllerDict[middleKey];
             }
         }
-        public async void Init(int seed)
+        public async Task Init(int seed)
         {
             Debug.Log("Initializing VectorTerrainGeneratorAsync");
             
@@ -50,7 +53,7 @@ namespace VectorTerrain.Scripts
             _terrainContainer = _terrainContainerManager.Init();
             VectorTerrainGlobals.GlobalSeed = seed;
             inputDict = new();
-            _sectorControllerDict = new();
+            sectorControllerDict = new();
             taskz = new();
             VectorTerrainGlobals.GlobalSeed = seed;
             DestroyAllSectors();
@@ -99,7 +102,7 @@ namespace VectorTerrain.Scripts
             }
             else
             {
-                input = new TerrainGraphInput(_sectorControllerDict[HighestGeneration()]);
+                input = new TerrainGraphInput(sectorControllerDict[HighestGeneration()]);
             }
 
             await InstantiateSector(input);
@@ -115,21 +118,27 @@ namespace VectorTerrain.Scripts
             if (inputDict.Keys.Contains(LowestGeneration() - 1))
                 input = inputDict[LowestGeneration() - 1];
             else
-                input = new TerrainGraphInput(_sectorControllerDict[LowestGeneration()]);
+                input = new TerrainGraphInput(sectorControllerDict[LowestGeneration()]);
 
             await InstantiateSector(input);
             DestroyTailSector();
             taskz.Remove(id - 1);
         }
+        
+        public bool AreTasksRunning()
+        {
+            return taskz.Values.Any(task => !task.IsCompleted);
+        }
+
 
         private SectorController TailSector()
         {
-            return _sectorControllerDict[_sectorControllerDict.Keys.Max()];
+            return sectorControllerDict[sectorControllerDict.Keys.Max()];
         }
     
         SectorController HeadSector()
         {
-            return _sectorControllerDict[_sectorControllerDict.Keys.Min()];
+            return sectorControllerDict[sectorControllerDict.Keys.Min()];
         }
 
         int HighestGeneration()
@@ -145,9 +154,14 @@ namespace VectorTerrain.Scripts
         async Task<SectorController> InstantiateSector(TerrainGraphInput input)
         {
             var g = graph.Copy() as TerrainGraph;
+            
+            // slow function, run on separate thread`
             var graphOutput = await Task.Run(()=>g.GetGraphOutput(input, false));
+            
+            // could be expensive but must run on main thread. Coroutines?
             var newSectorController = SectorController.New(graphOutput, _terrainContainer, new VisualiserConfig());
-            _sectorControllerDict[newSectorController.Generation] = newSectorController;
+            
+            sectorControllerDict[newSectorController.Generation] = newSectorController;
             if(!inputDict.Keys.Contains(newSectorController.Generation))
                 inputDict[newSectorController.Generation] = input;
         
@@ -155,15 +169,15 @@ namespace VectorTerrain.Scripts
         }
         void DestroyTailSector()
         {
-            var high = _sectorControllerDict.Keys.Max();
-            _sectorControllerDict[high].DestroyMe();
-            _sectorControllerDict.Remove(high);
+            var high = sectorControllerDict.Keys.Max();
+            sectorControllerDict[high].DestroyMe();
+            sectorControllerDict.Remove(high);
         }
         void DestroyHeadSector()
         {
-            var low = _sectorControllerDict.Keys.Min();
-            _sectorControllerDict[low].DestroyMe();
-            _sectorControllerDict.Remove(low);
+            var low = sectorControllerDict.Keys.Min();
+            sectorControllerDict[low].DestroyMe();
+            sectorControllerDict.Remove(low);
         }
         void DestroyAllSectors()
         {

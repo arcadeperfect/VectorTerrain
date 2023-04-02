@@ -12,6 +12,8 @@ namespace VectorTerrain.Scripts
 {
     public class VectorTerrainGenerator : MonoBehaviour, ITerrainGenerator
     {
+        public int taskCount { get => 0; }
+        
         public TerrainGraph graph;
 
         private Dictionary<int, TerrainGraphInput> inputDict;
