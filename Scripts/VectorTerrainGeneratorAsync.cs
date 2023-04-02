@@ -186,5 +186,18 @@ namespace VectorTerrain.Scripts
                 sc.DestroyMe();
             }
         }
+        
+        void DestroyAllTasks()
+        {
+            foreach (var task in taskz.Values)
+            {
+                task.Dispose();
+            }
+        }
+        
+        void OnDestroy()
+        {
+            DestroyAllTasks();
+        }
     }
 }
