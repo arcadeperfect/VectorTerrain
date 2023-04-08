@@ -66,6 +66,9 @@ namespace VectorTerrain.Scripts.Types
                 return returnMe;
             }
 
+            // Debug.Log("begin debug");
+            // Debug.Log(port.Connection.node == null);
+            // Debug.Log(port.Connection.node as ReturnSignalNode == null);
             var node = port.Connection.node as ReturnSignalNode;
             returnMe = node.Get(vectorSeed);
             if (generatePlot) plot.YVals.Add(returnMe);

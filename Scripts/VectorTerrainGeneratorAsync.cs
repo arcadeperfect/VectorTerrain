@@ -11,7 +11,7 @@ namespace VectorTerrain.Scripts
 {
     public class VectorTerrainGeneratorAsync : MonoBehaviour
     {
-        public int taskCount { get => taskz.Count; }
+        public int taskCount { get => taskDict.Count; }
         
         public TerrainGraph graph;
 
@@ -20,11 +20,11 @@ namespace VectorTerrain.Scripts
         public Dictionary<int,SectorController> sectorControllerDict;
         public Dictionary<int, SectorController> SectorDict { get => sectorControllerDict; }
 
-        private Dictionary<int, Task> taskz;
-        private List<Task> activeTasks = new();
+        private Dictionary<int, Task> taskDict;
+        // private List<Task> activeTasks = new();
         private Transform _terrainContainer;
         private TerrainContainerManager _terrainContainerManager;
-        private TerrainShapesRenderSettings _terrainShapesRenderSettings;
+        // private TerrainShapesRenderSettings _terrainShapesRenderSettings;
 
         private bool _initted = false;
         public bool Initted { get => _initted; }
@@ -44,7 +44,7 @@ namespace VectorTerrain.Scripts
             if(graph == null) throw new Exception("No graph assigned to VectorTerrainGeneratorAsync");
             
             graph.InitNodeIDs();
-            _terrainShapesRenderSettings = gameObject.GetComponent<TerrainShapesRenderSettings>();
+            // _terrainShapesRenderSettings = gameObject.GetComponent<TerrainShapesRenderSettings>();
             _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
             
             if (_terrainContainerManager == null)
@@ -54,7 +54,7 @@ namespace VectorTerrain.Scripts
             VectorTerrainGlobals.GlobalSeed = seed;
             inputDict = new();
             sectorControllerDict = new();
-            taskz = new();
+            taskDict = new();
             VectorTerrainGlobals.GlobalSeed = seed;
             DestroyAllSectors();
             float zOffset = 0;
@@ -73,9 +73,9 @@ namespace VectorTerrain.Scripts
                 return;
             }
             int taskID;
-            if (taskz.Count == 0) taskID = 0;
-            else taskID = taskz.Keys.Max() + 1;
-            taskz[taskID] = AdvanceTask(taskID);
+            if (taskDict.Count == 0) taskID = 0;
+            else taskID = taskDict.Keys.Max() + 1;
+            taskDict[taskID] = AdvanceTask(taskID);
         }
         public void Subvance()
         {
@@ -85,14 +85,14 @@ namespace VectorTerrain.Scripts
                 return;
             }
             int taskID;
-            if (taskz.Count == 0) taskID = 0;
-            else taskID = taskz.Keys.Max() + 1;
-            taskz[taskID] = SubvanceTask(taskID);
+            if (taskDict.Count == 0) taskID = 0;
+            else taskID = taskDict.Keys.Max() + 1;
+            taskDict[taskID] = SubvanceTask(taskID);
         }
 
         async Task AdvanceTask(int id)
         {
-            if (taskz.Keys.Contains(id - 1)) await taskz[id - 1];
+            if (taskDict.Keys.Contains(id - 1)) await taskDict[id - 1];
         
             TerrainGraphInput input;
 
@@ -108,12 +108,12 @@ namespace VectorTerrain.Scripts
             await InstantiateSector(input);
             
             DestroyHeadSector();
-            taskz.Remove(id - 1);
+            taskDict.Remove(id - 1);
         }
     
         async Task SubvanceTask(int id)
         {
-            if (taskz.Keys.Contains(id - 1)) await taskz[id - 1];
+            if (taskDict.Keys.Contains(id - 1)) await taskDict[id - 1];
             TerrainGraphInput input;
             if (inputDict.Keys.Contains(LowestGeneration() - 1))
                 input = inputDict[LowestGeneration() - 1];
@@ -122,12 +122,13 @@ namespace VectorTerrain.Scripts
 
             await InstantiateSector(input);
             DestroyTailSector();
-            taskz.Remove(id - 1);
+            // taskDict[id-1].Dispose();
+            taskDict.Remove(id - 1);
         }
         
         public bool AreTasksRunning()
         {
-            return taskz.Values.Any(task => !task.IsCompleted);
+            return taskDict.Values.Any(task => !task.IsCompleted);
         }
 
 
@@ -189,7 +190,7 @@ namespace VectorTerrain.Scripts
         
         void DestroyAllTasks()
         {
-            foreach (var task in taskz.Values)
+            foreach (var task in taskDict.Values)
             {
                 task.Dispose();
             }

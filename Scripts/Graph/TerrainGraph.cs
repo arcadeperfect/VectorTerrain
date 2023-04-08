@@ -29,8 +29,12 @@ namespace VectorTerrain.Scripts.Graph
             {
                 OutputNode outputNode = null;
                 foreach (var node in nodes)
+                {
+                    if (node == null) continue;
                     if (node.GetType() == typeof(OutputNode))
                         outputNode = node as OutputNode;
+
+                }
 
                 if (outputNode is not null) return outputNode;
                 throw new NoOutputNodeException();

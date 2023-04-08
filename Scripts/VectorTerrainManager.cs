@@ -8,73 +8,60 @@ using VectorTerrain.Scripts;
 
 public class VectorTerrainManager : MonoBehaviour
 {
-    // private VectorTerrainGeneratorAsync generator;
-    // public VectorTerrainGeneratorAsync Generator => generator;
-
-    // private VectorTerrainGenerator generator;
-    //
-    // private VectorTerrainGeneratorAsync generatorAsync;
-
-    
-    // private ITerrainGenerator generator;
-
-    private VectorTerrainGeneratorAsync generator;
-    
-    public Transform Focus;
-    
     public int seed;
-
-    // public float t;
+    public Transform Focus;
 
     public bool async;
-    
+
+    private VectorTerrainGeneratorAsync generatorAsync;
+    private VectorTerrainGenerator generator;
+
+
     private float _advanceThreshold = 0.51f;
     
     private async void Awake()
     {
-        // if(async)
-        //     generator = gameObject.GetComponent<VectorTerrainGeneratorAsync>() as ITerrainGenerator;
-        // else
-        //     generator = gameObject.GetComponent<VectorTerrainGenerator>() as ITerrainGenerator;
-        
-        generator = gameObject.GetComponent<VectorTerrainGeneratorAsync>();
-        await generator.Init(seed);
+        if (async)
+        {
+            generatorAsync = gameObject.GetComponent<VectorTerrainGeneratorAsync>();
+            await generatorAsync.Init(seed);
+        }
+        else
+        {
+            generator = gameObject.GetComponent<VectorTerrainGenerator>();
+            generator.Init(seed);
+        }
     }
 
     private void LateUpdate()
     {
-        if (!generator.Initted) return;
-    
-        var activeSector = generator.middleSectorController;
-        var begin = activeSector.sectorData.LocalStart.x;
-        var end = activeSector.sectorData.LocalEnd.x;
-    
-        // float d = (end - begin);
-        // float buffer = d * 0.25f;
-        
-        var p = Focus.position.x;
-    
-        // if(Input.GetKeyDown(KeyCode.S)) generator.Subvance();
-        // if(Input.GetKeyDown(KeyCode.A)) generator.Advance();
+        if (async)
+        {
+            if (!generatorAsync.Initted) return;
+            if (generatorAsync.AreTasksRunning()) return;
 
+            var activeSector = generator.middleSectorController;
+            var begin = activeSector.sectorData.LocalStart.x;
+            var end = activeSector.sectorData.LocalEnd.x;
+            var p = Focus.position.x;
 
-        Debug.Log(generator.AreTasksRunning());
-        if (generator.AreTasksRunning()) return;
-        
-        if(p>end)
-            generator.Advance();
-        else if(p<begin)
-            generator.Subvance();
-    }
+            if (p > end)
+                generator.Advance();
+            else if (p < begin)
+                generator.Subvance();
+        }
+        else
+        {
+            if (!generator.Initted) return;
+            var activeSector = generator.middleSectorController;
+            var begin = activeSector.sectorData.LocalStart.x;
+            var end = activeSector.sectorData.LocalEnd.x;
+            var p = Focus.position.x;
 
-    private float SignedSimpleDist(float a, float b)
-    {
-        return a - b;
+            if (p > end)
+                generator.Advance();
+            else if (p < begin)
+                generator.Subvance();
+        }
     }
-    
-    private float SimpleDist(float a, float b)
-    {
-        return Mathf.Abs(a - b);
-    }
-    
 }
