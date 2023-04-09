@@ -14,7 +14,8 @@ namespace VectorTerrain.Scripts
     {
         public int taskCount { get => 0; }
         
-        public TerrainGraph graph;
+        private VectorTerrainManager _vectorTerrainManager;
+        private TerrainGraph graph;
 
         private Dictionary<int, TerrainGraphInput> inputDict;
         
@@ -40,7 +41,10 @@ namespace VectorTerrain.Scripts
         public void Init(int seed)
         {
             Debug.Log("Initializing VectorTerrainGenerator");
-
+            _vectorTerrainManager = gameObject.GetComponent<VectorTerrainManager>();
+            if (_vectorTerrainManager == null) throw new Exception("No VectorTerrainManager assigned to VectorTerrainGeneratorAsync");
+           
+            graph = _vectorTerrainManager.graph;
             if(graph == null) throw new Exception("No graph assigned to VectorTerrainGenerator");
             
             graph.InitNodeIDs();

@@ -5,9 +5,15 @@ using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using VectorTerrain.Scripts;
+using VectorTerrain.Scripts.Graph;
+using VectorTerrain.Scripts.Sector;
 
 public class VectorTerrainManager : MonoBehaviour
 {
+    public Dictionary<int, SectorController> _sectorDict;
+    
+    public TerrainGraph graph;
+    
     public int seed;
     public Transform Focus;
 
@@ -18,6 +24,15 @@ public class VectorTerrainManager : MonoBehaviour
 
 
     private float _advanceThreshold = 0.51f;
+    
+    // public event Action<TerrainGraphOutput> OnTerrainGenerated;
+    public event Action OnRefresh;
+
+    public void Updated()
+    {
+        OnRefresh?.Invoke();
+    }
+    
     
     private async void Awake()
     {

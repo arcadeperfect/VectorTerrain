@@ -12,19 +12,14 @@ namespace VectorTerrain.Scripts
     public class VectorTerrainGeneratorAsync : MonoBehaviour
     {
         public int taskCount { get => taskDict.Count; }
-        
-        public TerrainGraph graph;
-
+        private VectorTerrainManager _vectorTerrainManager;
+        private TerrainGraph graph;
         private Dictionary<int, TerrainGraphInput> inputDict;
-        
         public Dictionary<int,SectorController> sectorControllerDict;
         public Dictionary<int, SectorController> SectorDict { get => sectorControllerDict; }
-
         private Dictionary<int, Task> taskDict;
-        // private List<Task> activeTasks = new();
         private Transform _terrainContainer;
         private TerrainContainerManager _terrainContainerManager;
-        // private TerrainShapesRenderSettings _terrainShapesRenderSettings;
 
         private bool _initted = false;
         public bool Initted { get => _initted; }
@@ -41,14 +36,15 @@ namespace VectorTerrain.Scripts
         {
             Debug.Log("Initializing VectorTerrainGeneratorAsync");
             
+            _vectorTerrainManager = gameObject.GetComponent<VectorTerrainManager>();
+            if (_vectorTerrainManager == null) throw new Exception("No VectorTerrainManager assigned to VectorTerrainGeneratorAsync");
+           
+            graph = _vectorTerrainManager.graph;
             if(graph == null) throw new Exception("No graph assigned to VectorTerrainGeneratorAsync");
-            
             graph.InitNodeIDs();
-            // _terrainShapesRenderSettings = gameObject.GetComponent<TerrainShapesRenderSettings>();
-            _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
             
-            if (_terrainContainerManager == null)
-                _terrainContainerManager = gameObject.AddComponent<TerrainContainerManager>();
+            _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
+            if (_terrainContainerManager == null) _terrainContainerManager = gameObject.AddComponent<TerrainContainerManager>();
 
             _terrainContainer = _terrainContainerManager.Init();
             VectorTerrainGlobals.GlobalSeed = seed;
@@ -190,6 +186,7 @@ namespace VectorTerrain.Scripts
         
         void DestroyAllTasks()
         {
+            if(taskDict == null) return;
             foreach (var task in taskDict.Values)
             {
                 task.Dispose();

@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using Nodez.Nodes;
 using Sirenix.OdinInspector;
-using Unity.VisualScripting;
 using UnityEngine;
 using VectorTerrain.Scripts;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
 using VectorTerrain.Scripts.Terrain;
-using VectorTerrain.Scripts.Types.Exceptions;
 
 [ExecuteAlways]
 public class TerrainTester : MonoBehaviour
 {
-    [Required] public TerrainGraph terrainGraph;
-
+    private VectorTerrainManager _vectorTerrainManager;
+    private TerrainGraph terrainGraph;    
+    
     public VisualiserConfig visualiserConfig;
     public int seed;
     public int sectors;
@@ -73,7 +72,11 @@ public class TerrainTester : MonoBehaviour
         
         UnInit();
 
+        _vectorTerrainManager = gameObject.GetComponent<VectorTerrainManager>();
+        if (_vectorTerrainManager == null) throw new Exception("No VectorTerrainManager assigned to VectorTerrainGeneratorAsync");
         
+        terrainGraph = _vectorTerrainManager.graph;
+        if(terrainGraph == null) throw new Exception("No graph assigned to VectorTerrainGenerator");
         
         _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
         if (_terrainContainerManager == null)
@@ -159,6 +162,8 @@ public class TerrainTester : MonoBehaviour
         }
         
         SectorGenerationDone?.Invoke();
+        _vectorTerrainManager._sectorDict = _sectorDict; //todo better way?
+        _vectorTerrainManager.Updated();
     }
     
     private void DestroyAllSectorControllers()

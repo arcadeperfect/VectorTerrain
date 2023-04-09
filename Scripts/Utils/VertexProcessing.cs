@@ -15,6 +15,16 @@ namespace VectorTerrain.Scripts.Utils
             distance,
             points
         }
+        
+        public static List<Vector2> Verts2Vectors(List<Vertex2> verts)
+        {
+            List<Vector2> vectors = new();
+            foreach (var vertex2 in verts)
+            {
+                vectors.Add(vertex2);
+            }
+            return vectors;
+        }
 
         // public static List<Vertex2> RemoveCollinearPoints(List<Vertex2> verts, float tolerance)
         // {

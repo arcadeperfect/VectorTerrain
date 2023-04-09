@@ -51,7 +51,7 @@ namespace VectorTerrain.Scripts.Sector
                 sectorData.Verts[i] = v;
             }
 
-            var settings = new PolyLineRenderSettings(VectorTerrainGlobals.PolylineGeometry);
+            var settings = new PolyLineRenderSettings();
             shapesRenderer.Init(sectorData, settings);
         }
 
@@ -217,7 +217,7 @@ namespace VectorTerrain.Scripts.Sector
             endPositionObj.transform.position = sectorData.LocalEnd;
 
             shapesRenderer = gameObject.AddComponent<TerrainShapesRenderer>();
-            var settings = new PolyLineRenderSettings(VectorTerrainGlobals.PolylineGeometry);
+            var settings = new PolyLineRenderSettings();
             shapesRenderer.Init(this.sectorData, settings);
             
             colliderController = gameObject.AddComponent<SectorColliderController>();
