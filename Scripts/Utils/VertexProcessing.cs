@@ -25,6 +25,27 @@ namespace VectorTerrain.Scripts.Utils
             }
             return vectors;
         }
+        public static List<Vertex2> Vectors2Verts(List<Vector2> vectors)
+        {
+            List<Vertex2> verts = new();
+            foreach (var vector2 in vectors)
+            {
+                verts.Add(vector2);
+            }
+            return verts;
+        }
+
+        public static List<Vertex2> Vectors2Verts(Vector2[] vectors)
+        {
+            List<Vertex2> verts = new();
+            foreach (var vector2 in vectors)
+            {
+                verts.Add(vector2);
+            }
+            return verts;
+        }
+
+
 
         // public static List<Vertex2> RemoveCollinearPoints(List<Vertex2> verts, float tolerance)
         // {

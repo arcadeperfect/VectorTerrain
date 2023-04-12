@@ -76,6 +76,7 @@ public class TerrainTester : MonoBehaviour
         if (_vectorTerrainManager == null) throw new Exception("No VectorTerrainManager assigned to VectorTerrainGeneratorAsync");
         
         terrainGraph = _vectorTerrainManager.graph;
+        Debug.Log(terrainGraph);
         if(terrainGraph == null) throw new Exception("No graph assigned to VectorTerrainGenerator");
         
         _terrainContainerManager = gameObject.GetComponent<TerrainContainerManager>();
@@ -101,18 +102,17 @@ public class TerrainTester : MonoBehaviour
 
     private void UnInit()
     {
-        // if (!active)
+
+
+        // if (!ValidateVariables())
         //     return;
 
-        if (!ValidateVariables())
-            return;
-
         DestroyAllSectorControllers();
-
-        terrainGraph.NodesChanged -= Init;
-        terrainGraph.NodesUpdated -= OnGraphUpdate;
-        terrainGraph.NodesChanged -= OnGraphUpdate;
-        _initted = false;
+        //
+        // terrainGraph.NodesChanged -= Init;
+        // terrainGraph.NodesUpdated -= OnGraphUpdate;
+        // terrainGraph.NodesChanged -= OnGraphUpdate;
+        // _initted = false;
     }
 
     private bool ValidateVariables()

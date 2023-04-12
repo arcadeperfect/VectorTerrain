@@ -19,6 +19,11 @@ namespace Terrain
         public Polyline pl;
         // public Polygon pg;  //todo not implemented
 
+        public void Init(List<Vector2> points, PolyLineRenderSettings settings)
+        {
+            Init(points.ToArray(), settings);
+        }
+
         public void Init(Vector2[] points)
         {
             Init(points, new PolyLineRenderSettings());
@@ -44,6 +49,8 @@ namespace Terrain
             PopulatePolyLine(points);
             pl.Color = settings.Color;
             pl.Thickness = settings.Thickness;
+            pl.Closed = settings.Closed;
+            pl.SortingOrder = settings.sortingOrder;
         }
 
         
@@ -88,7 +95,8 @@ namespace Terrain
         public PolylineGeometry Geometry;
         public float Thickness = 1;
         public Color Color = UnityEngine.Color.cyan;
-        
+        public bool Closed = false;
+        public int sortingOrder = 0;
         public PolyLineRenderSettings()
         {
             Geometry = PolylineGeometry.Flat2D;
@@ -98,6 +106,17 @@ namespace Terrain
         // {
         //     Geometry = geometry;
         // }
+        
+        //Contstructor with all params
+        public PolyLineRenderSettings(PolylineGeometry geometry, float thickness, Color color, bool closed, int sortingOrder)
+        {
+            Geometry = geometry;
+            Thickness = thickness;
+            Color = color;
+            Closed = closed;
+            this.sortingOrder = sortingOrder;
+        }
+        
         
         public PolyLineRenderSettings(Color color)
         {
@@ -112,11 +131,22 @@ namespace Terrain
             Color = color;
         }
         
-        public PolyLineRenderSettings(float thickness, Color color)
+        public PolyLineRenderSettings(float thickness, Color color, bool closed)
         {
             Geometry = PolylineGeometry.Flat2D;
             Thickness = thickness;
             Color = color;
+            Closed = closed;
         }
+        
+        public PolyLineRenderSettings(float thickness, Color color, bool closed, int SortingOrder)
+        {
+            Geometry = PolylineGeometry.Flat2D;
+            Thickness = thickness;
+            Color = color;
+            Closed = closed;
+            sortingOrder = SortingOrder;
+        }
+        
     }
 }

@@ -118,15 +118,11 @@ namespace VectorTerrain.Scripts.Nodes
                 }
             }
         }
-
-        
-        
         protected virtual void OnGenerationStart()
         {
             InitNoodles(); //todo do I need to do this every time?
             foreach (var signalNoodle in GetInputSignalNoodles()) signalNoodle.plot.Clear();
         }
-
         private List<SignalNoodle> GetInputSignalNoodles()
         {
             List<SignalNoodle> returnMe = new();
@@ -146,29 +142,24 @@ namespace VectorTerrain.Scripts.Nodes
 
             return returnMe;
         }
-
         public override object GetValue(NodePort port)
         {
             return null;
         }
-
         public virtual void OnGenerationEnd()
         {
         }
-
         public void Updated()
         {
             Graph.OnNodesUpdated();
             NodeUpdateEvent?.Invoke();
         }
-
         public override void OnCreateConnection(NodePort from, NodePort to)
         {
             base.OnCreateConnection(from, to);
             NodeUpdateEvent?.Invoke();
             Graph.OnNodesUpdated();
         }
-
         public override void OnRemoveConnection(NodePort port)
         {
             base.OnRemoveConnection(port);
@@ -176,6 +167,16 @@ namespace VectorTerrain.Scripts.Nodes
             Graph.OnNodesUpdated();
         }
 
+        protected List<IReturnSectorData> GetGeometryInputNodes()
+        {
+            List<IReturnSectorData> returnMe = new();
+            foreach (var input in Inputs)
+            {
+                if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
+                    returnMe.Add(input.Connection.node as IReturnSectorData);
+            }
+            return returnMe;
+        }
         // protected List<NodePort> GetSignalInputPorts()
         // {
         //     List<NodePort> returnMe = new();

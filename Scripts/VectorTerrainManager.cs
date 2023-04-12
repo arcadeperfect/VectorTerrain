@@ -32,18 +32,30 @@ public class VectorTerrainManager : MonoBehaviour
     {
         OnRefresh?.Invoke();
     }
-    
-    
-    private async void Awake()
+
+    private void OnEnable()
     {
+        Init();
+    }
+
+    private void Awake()
+    {
+        Init();
+    }
+    [Button]
+    private async void Init()
+    {
+        Debug.Log(graph);
         if (async)
         {
             generatorAsync = gameObject.GetComponent<VectorTerrainGeneratorAsync>();
+            if (generatorAsync == null) return;
             await generatorAsync.Init(seed);
         }
         else
         {
             generator = gameObject.GetComponent<VectorTerrainGenerator>();
+            if (generator == null) return;
             generator.Init(seed);
         }
     }
