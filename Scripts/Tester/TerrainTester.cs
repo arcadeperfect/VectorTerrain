@@ -20,7 +20,7 @@ public class TerrainTester : MonoBehaviour
     public int sectors;
     
     private bool _initted;
-    private Dictionary<int, SectorController> _sectorDict;
+    public Dictionary<int, SectorController> _sectorDict;
     private TerrainContainerManager _terrainContainerManager;
     private Transform _terrainContainer;
     
