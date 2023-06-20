@@ -10,11 +10,11 @@ using VectorTerrain.Scripts.Terrain;
 
 namespace VectorTerrain.Scripts
 {
-    public class VectorTerrainGenerator : MonoBehaviour, ITerrainGenerator
+    public class VectorTerrainGenerator : MonoBehaviour
     {
         public int taskCount { get => 0; }
         
-        public TerrainGraph graph;
+        private TerrainGraph graph;
 
         private Dictionary<int, TerrainGraphInput> inputDict;
         
@@ -41,6 +41,11 @@ namespace VectorTerrain.Scripts
         {
             Debug.Log("Initializing VectorTerrainGenerator");
 
+            var manager = GetComponent<VectorTerrainManager>();
+            if (manager == null) throw new Exception("A Vector Terrain Manager is required on the same game object as the generator");
+            graph = manager.graph;
+            
+            
             if(graph == null) throw new Exception("No graph assigned to VectorTerrainGenerator");
             
             graph.InitNodeIDs();

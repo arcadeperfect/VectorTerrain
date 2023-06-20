@@ -7,7 +7,7 @@ namespace VectorTerrain.Scripts.Sector
 {
     public class SectorColliderController : MonoBehaviour
     {
-        public EdgeCollider2D collider2D;
+        public new EdgeCollider2D collider2D;
         
         public void Init(SectorData sectorData, SectorColliderSettings settings)
         {

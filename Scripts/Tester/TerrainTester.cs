@@ -15,6 +15,8 @@ public class TerrainTester : MonoBehaviour
 {
     [Required] public TerrainGraph terrainGraph;
 
+    public bool active = true;
+    
     public VisualiserConfig visualiserConfig;
     public int seed;
     public int sectors;
@@ -38,7 +40,7 @@ public class TerrainTester : MonoBehaviour
         Init();
         Process();
     }
-
+    
     private void OnDisable()
     {
         UnInit();
@@ -49,12 +51,12 @@ public class TerrainTester : MonoBehaviour
         UnInit();
     }
 
-    // private void OnValidate()
-    // {
-    //     // if (!active)
-    //     //     return;
-    //     Process();
-    // }
+    private void OnValidate()
+    {
+        if (!active)
+            return;
+        Process();
+    }
 
     [Button]
     private void ReInit()

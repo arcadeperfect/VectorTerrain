@@ -13,7 +13,7 @@ namespace VectorTerrain.Scripts
     {
         public int taskCount { get => taskDict.Count; }
         
-        public TerrainGraph graph;
+        private TerrainGraph graph;
 
         private Dictionary<int, TerrainGraphInput> inputDict;
         
@@ -40,6 +40,10 @@ namespace VectorTerrain.Scripts
         public async Task Init(int seed)
         {
             Debug.Log("Initializing VectorTerrainGeneratorAsync");
+
+            var manager = GetComponent<VectorTerrainManager>();
+            if (manager == null) throw new Exception("A Vector Terrain Manager is required on the same game object as the generator");
+            graph = manager.graph;
             
             if(graph == null) throw new Exception("No graph assigned to VectorTerrainGeneratorAsync");
             
