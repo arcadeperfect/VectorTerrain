@@ -7,6 +7,7 @@ using UnityEngine;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
 using VectorTerrain.Scripts.Terrain;
+using VectorTerrain.Scripts.Tester;
 
 namespace VectorTerrain.Scripts
 {

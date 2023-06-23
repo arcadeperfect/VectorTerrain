@@ -152,21 +152,21 @@ namespace VectorTerrain.Scripts.Types
             TotalDist = null;
         }
 
-        public Vertex2(Vector2 initVec, Color Color)
+        public Vertex2(Vector2 initVec, Color color)
         {
             Pos = initVec;
-            colorGenerator = Color;
+            colorGenerator = color;
             normal = NormalDefault;
             thickness = THICKNESS_DEFAULT;
             Dist = null;
             TotalDist = null;
         }
 
-        public Vertex2(Vector2 initVec, Color Color, float Thickness)
+        public Vertex2(Vector2 initVec, Color color, float thickness)
         {
             Pos = initVec;
-            colorGenerator = Color;
-            thickness = Thickness;
+            colorGenerator = color;
+            this.thickness = thickness;
             normal = NormalDefault;
             Dist = null;
             TotalDist = null;

@@ -17,11 +17,8 @@ namespace VectorTerrain.Scripts.Nodes
     public abstract class TerrainNode : Node, IRealTimeUpdate, IPersistentSeed
     {
         [HideInInspector] [CanBeNull] public string ID;
-
         private bool _noodlesInitted;
-
         protected SeedContainer thisNodeSeedContainer;
-
         protected TerrainGraph Graph => graph as TerrainGraph;
         protected int GlobalSeed => Graph.GlobalSeed;
         public int Generation => Graph.Generation;
@@ -29,36 +26,21 @@ namespace VectorTerrain.Scripts.Nodes
         protected float BeginDist => TerrainGraphInput.totalDistanceSoFar;
         public float BeginPoints => TerrainGraphInput.totalPointsSoFar;
         public Vector3 VectorSeed => SeedContainer.vectorSeed;
-
-        public virtual void OnDestroy()
-        {
-            Graph.GenerationStart -= OnGenerationStart;
-            Graph.GenerationStart -= OnGenerationEnd;
-        }
-
         public SeedContainer SeedContainer
         {
             get => thisNodeSeedContainer;
             set => thisNodeSeedContainer = value;
         }
-
         public event Action NodeUpdateEvent;
-
-        public void resetSeedContainer()
-        {
-            thisNodeSeedContainer.Reset();
-        }
-
+        public void ResetSeedContainer() => thisNodeSeedContainer.Reset();
         protected override void Init()
         {
             base.Init();
-
             Graph.GenerationStart += OnGenerationStart;
             Graph.GenerationEnd += OnGenerationEnd;
             InitNoodles();
             Graph.OnNodesChanged();
         }
-
         public void InitNoodles()
         {
             foreach (var fieldInfo in GetType().GetFields())
@@ -102,8 +84,8 @@ namespace VectorTerrain.Scripts.Nodes
                     var noodle = fieldInfo.GetValue(this) as FloatNoodle;
 
                     noodle.port = port;
-                    noodle.plot = new Plot(Plot.PlotType.Float);
-                    Graph.graphPlotList.Add(noodle.plot);
+                    noodle.Plot = new Plot(Plot.PlotType.Float);
+                    Graph.graphPlotList.Add(noodle.Plot);
                 }
 
                 // Init MaskNoodles
@@ -118,35 +100,48 @@ namespace VectorTerrain.Scripts.Nodes
                 }
             }
         }
-
-        
-        
         protected virtual void OnGenerationStart()
         {
             InitNoodles(); //todo do I need to do this every time?
             foreach (var signalNoodle in GetInputSignalNoodles()) signalNoodle.plot.Clear();
         }
-
-        private List<SignalNoodle> GetInputSignalNoodles()
+        protected List<SignalNoodle> GetInputSignalNoodles()
         {
             List<SignalNoodle> returnMe = new();
 
             foreach (var fieldInfo in GetType().GetFields())
             {
                 if (!fieldInfo.HasAttribute(typeof(InputAttribute))) continue;
-
-                var port = GetPort(fieldInfo.Name);
-
                 if (fieldInfo.FieldType == typeof(SignalNoodle))
                 {
-                    var signalNoodle = fieldInfo.GetValue(this) as SignalNoodle;
-                    returnMe.Add(signalNoodle);
+                    var noodle = fieldInfo.GetValue(this) as SignalNoodle;
+                    returnMe.Add(noodle);
                 }
             }
-
             return returnMe;
         }
+        protected List<FloatNoodle> GetInputFloatNoodles()
+        {
+            List<FloatNoodle> returnMe = new();
 
+            foreach (var fieldInfo in GetType().GetFields())
+            {
+                if (!fieldInfo.HasAttribute(typeof(InputAttribute))) continue;
+
+                // var port = GetPort(fieldInfo.Name);
+
+                if (fieldInfo.FieldType == typeof(FloatNoodle))
+                {
+                    var noodle = fieldInfo.GetValue(this) as FloatNoodle;
+                    returnMe.Add(noodle);
+                }
+            }
+            return returnMe;
+        }
+        protected float GetInputFloat(int index)
+        {
+            return GetInputFloatNoodles()[index].value;
+        }
         public override object GetValue(NodePort port)
         {
             return null;
@@ -256,14 +251,15 @@ namespace VectorTerrain.Scripts.Nodes
         //     return returnMe;
         // }
         //
-        // protected List<IReturnSectorData> GetGeometryInputNodes()
-        // {
-        //     List<IReturnSectorData> returnMe = new();
-        //     foreach (var input in Inputs)
-        //         if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
-        //             returnMe.Add(input.Connection.node as IReturnSectorData);
-        //     return returnMe;
-        // }
+        [Obsolete]
+        protected List<IReturnSectorData> GetGeometryInputNodes()
+        {
+            List<IReturnSectorData> returnMe = new();
+            foreach (var input in Inputs)
+                if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
+                    returnMe.Add(input.Connection.node as IReturnSectorData);
+            return returnMe;
+        }
 
         // protected List<NodePort> GetMaskInputPorts()
         // {
@@ -296,5 +292,11 @@ namespace VectorTerrain.Scripts.Nodes
         //     }
         //     return null;
         // }
+        
+        public virtual void OnDestroy()
+        {
+            Graph.GenerationStart -= OnGenerationStart;
+            Graph.GenerationStart -= OnGenerationEnd;
+        }
     }
 }

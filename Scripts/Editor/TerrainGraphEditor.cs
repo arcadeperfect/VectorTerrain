@@ -21,21 +21,16 @@ namespace VectorTerrain.Scripts.Editor
         
         public override void AddContextMenuItems(GenericMenu menu, Type compatibleType = null, XNode.NodePort.IO direction = XNode.NodePort.IO.Input)
         {
-
-            Debug.Log("Adding context menu items");
-            
             Vector2 pos = NodeEditorWindow.current.WindowToGridPosition(Event.current.mousePosition);
-
             Type[] nodeTypes;
-            
             var allowedTypes = NodeEditorReflection.GetDerivedTypes(typeof(TerrainNode)).OrderBy(GetNodeMenuOrder).ToArray();
             
-            if (compatibleType != null && NodeEditorPreferences.GetSettings().createFilter) {
+            if (compatibleType != null && NodeEditorPreferences.GetSettings().createFilter) 
+            {
                 var compatibleTypes = NodeEditorUtilities.GetCompatibleNodesTypes(NodeEditorReflection.nodeTypes, compatibleType, direction).OrderBy(GetNodeMenuOrder).ToArray();
                 nodeTypes = compatibleTypes.Intersect(allowedTypes).ToArray();
-
-
-            } else
+            } 
+            else 
             {
                 nodeTypes = allowedTypes;
             }

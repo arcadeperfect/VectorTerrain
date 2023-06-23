@@ -3,6 +3,7 @@ using System.Linq;
 using Sirenix.OdinInspector;
 using Terrain;
 using UnityEngine;
+using VectorTerrain.Scripts.Attributes;
 using VectorTerrain.Scripts.Nodes.Floats;
 using VectorTerrain.Scripts.Nodes.Mask;
 using VectorTerrain.Scripts.Nodes.Weights;
@@ -76,26 +77,35 @@ namespace VectorTerrain.Scripts.Types
         }
     }
 
-    [Serializable]
+    [Serializable]      
     public class FloatNoodle
     {
         [HideLabel] public float value = 1;
         [HideInInspector] public NodePort port; // todo make private, use constructor
-        [HideInInspector] public Plot plot;
+        [HideInInspector] public Plot Plot;
 
+        public readonly float? Min = null;
+        public readonly float? Max = null;
+
+        public FloatNoodle() { }
+        public FloatNoodle(float min) => Min = min;
+        
+        
         public float GetFloat(Vector3 vectorSeed)
         {
             float returnMe;
             if (!port.IsConnected)
             {
                 returnMe = value;
-                plot.YVals.Add(returnMe);
+                Plot.YVals.Add(returnMe);
                 return returnMe;
             }
-
             var node = port.Connection.node as ReturnFloatNode;
             returnMe = node.GetFloat(vectorSeed);
-            plot.YVals.Add(returnMe);
+            Plot.YVals.Add(returnMe);
+            
+            if(Min != null) returnMe = Mathf.Max(returnMe, (float) Min);
+            
             return returnMe;
         }
     }

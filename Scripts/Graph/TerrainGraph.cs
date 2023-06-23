@@ -104,7 +104,7 @@ namespace VectorTerrain.Scripts.Graph
                     var id = terrainNode.ID;
 
                     if
-                        (newSeedsDict.Count == 0) terrainNode.resetSeedContainer();
+                        (newSeedsDict.Count == 0) terrainNode.ResetSeedContainer();
 
                     else if
                         (newSeedsDict.ContainsKey(id)) terrainNode.SeedContainer = newSeedsDict[id];

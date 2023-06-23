@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProceduralToolkit;
 using UnityEngine;
+using VectorTerrain.Scripts.Utils;
 
 namespace VectorTerrain.Scripts.Types
 {
@@ -494,6 +495,11 @@ namespace VectorTerrain.Scripts.Types
         //     n.Process();
         //     return n;
         // }
+
+        public void Resample(float value, VertexResample.ResampleMode mode)
+        {
+            _verts = VertexResample.Resample(this, value, mode);
+        }
 
         public class RegionNormalised
         {
