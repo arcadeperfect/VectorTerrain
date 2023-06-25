@@ -22,7 +22,7 @@ namespace VectorTerrain.Scripts.Nodes.Geometry.Generators
         public AlgorithmNoodle algorithm;
         
         [Output()]
-        public SectorDataNoodle Output;
+        public GeometryNoodle Output;
         public SectorData GetSectorData(TerrainGraphInput thisInput)
         {
             if (GetConnectedAlgorithm() == null) return null;

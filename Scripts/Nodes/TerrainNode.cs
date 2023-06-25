@@ -1,13 +1,12 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Sirenix.Utilities;
-using Terrain;
 using Unity.VisualScripting;
 using UnityEngine;
 using VectorTerrain.Scripts.Graph;
-using VectorTerrain.Scripts.Nodes.Floats;
-using VectorTerrain.Scripts.Nodes.Weights;
 using VectorTerrain.Scripts.Types;
 using VectorTerrain.Scripts.Types.Interfaces;
 using XNode;
@@ -45,7 +44,7 @@ namespace VectorTerrain.Scripts.Nodes
         {
             foreach (var fieldInfo in GetType().GetFields())
             {
-                if (!fieldInfo.HasAttribute(typeof(InputAttribute))) continue;
+                if (!fieldInfo.HasAttribute(typeof(Node.InputAttribute))) continue;
 
                 var port = GetPort(fieldInfo.Name);
 
@@ -142,6 +141,22 @@ namespace VectorTerrain.Scripts.Nodes
         {
             return GetInputFloatNoodles()[index].value;
         }
+
+        protected List<IReturnSectorData> GetGeometryInputNodes()
+        {
+            List<IReturnSectorData> returnMe = new();
+            foreach (var input in Inputs)
+                if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
+                    returnMe.Add(input.Connection.node as IReturnSectorData);
+            return returnMe;
+        }
+        
+        protected SectorData GetGeometryInput(int index, TerrainGraphInput terrainGraphInput)
+        {
+            return GetGeometryInputNodes()[index].GetSectorData(terrainGraphInput);
+        }
+        
+        
         public override object GetValue(NodePort port)
         {
             return null;
@@ -251,15 +266,7 @@ namespace VectorTerrain.Scripts.Nodes
         //     return returnMe;
         // }
         //
-        [Obsolete]
-        protected List<IReturnSectorData> GetGeometryInputNodes()
-        {
-            List<IReturnSectorData> returnMe = new();
-            foreach (var input in Inputs)
-                if (input.IsConnected && input.Connection.node.GetType().InheritsFrom(typeof(IReturnSectorData)))
-                    returnMe.Add(input.Connection.node as IReturnSectorData);
-            return returnMe;
-        }
+
 
         // protected List<NodePort> GetMaskInputPorts()
         // {

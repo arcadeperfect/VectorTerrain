@@ -10,10 +10,10 @@ namespace VectorTerrain.Scripts.Nodes.Filters
         public bool disable;
         
         [Input(typeConstraint = TypeConstraint.Strict,connectionType = ConnectionType.Override)]
-        public SectorDataNoodle Input;
+        public GeometryNoodle Input;
         
         [Output] 
-        public SectorDataNoodle Output;
+        public GeometryNoodle Output;
         protected abstract SectorData Process(SectorData input);
         public virtual SectorData GetSectorData(TerrainGraphInput thisInput)
         {

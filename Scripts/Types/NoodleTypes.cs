@@ -17,7 +17,7 @@ namespace VectorTerrain.Scripts.Types
     }
 
     [Serializable]
-    public class SectorDataNoodle
+    public class GeometryNoodle
     {
     }
 

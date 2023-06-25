@@ -16,7 +16,7 @@ namespace Nodez.Nodes
         public bool nodePaused;
         
         [Input(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]
-        public SectorDataNoodle Input;
+        public GeometryNoodle Input;
 
 
         public SectorData GetSectorData(TerrainGraphInput terrainGraphInput)
