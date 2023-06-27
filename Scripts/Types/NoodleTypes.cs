@@ -84,11 +84,11 @@ namespace VectorTerrain.Scripts.Types
         [HideInInspector] public NodePort port; // todo make private, use constructor
         [HideInInspector] public Plot Plot;
 
-        public readonly float? Min = null;
-        public readonly float? Max = null;
+        // public readonly float? Min = null;
+        // public readonly float? Max = null;
 
-        public FloatNoodle() { }
-        public FloatNoodle(float min) => Min = min;
+        // public FloatNoodle() { }
+        // public FloatNoodle(float min) => Min = min;
         
         
         public float GetFloat(Vector3 vectorSeed)
@@ -104,7 +104,7 @@ namespace VectorTerrain.Scripts.Types
             returnMe = node.GetFloat(vectorSeed);
             Plot.YVals.Add(returnMe);
             
-            if(Min != null) returnMe = Mathf.Max(returnMe, (float) Min);
+            // if(Min != null) returnMe = Mathf.Max(returnMe, (float) Min);
             
             return returnMe;
         }

@@ -11,7 +11,7 @@ namespace VectorTerrain.Scripts.Terrain
     {
         public static List<GrassSpawnPoint> ProcessGrassRegionsNormalised(TerrainGraphOutput tg, float density)
         {
-            var sd = tg.sectorData;
+            var sd = tg.SectorData;
             List<GrassSpawnPoint> returnMe = new();
             var rnd = new Random(1);
             var regions = from region in sd.RegionsNormalised where region.ID == "grass" select region;
@@ -45,9 +45,9 @@ namespace VectorTerrain.Scripts.Terrain
 
         public static List<GrassSpawnPoint> ProcessGrassRegionsAbsolute(TerrainGraphOutput tg, float density)
         {
-            var sd = tg.sectorData;
-            var beginDist = tg.totalDistanceAtStart;
-            var endDist = tg.totalDistanceAtEnd;
+            var sd = tg.SectorData;
+            var beginDist = tg.TotalDistanceAtStart;
+            var endDist = tg.TotalDistanceAtEnd;
             List<GrassSpawnPoint> returnMe = new();
             var rnd = new Random(1);
             var regions = from region in sd.RegionsAbsolute where region.ID == "grass" select region;

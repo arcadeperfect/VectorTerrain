@@ -9,12 +9,12 @@ namespace VectorTerrain.Scripts.Types
     ///     Representation of a 2D line vertexSegment
     /// </summary>
     [Serializable]
-    public struct VertexSegment : IEquatable<VertexSegment>, IFormattable
+    public struct VertexSegment : IEquatable<VertexSegment>
     {
-        public Vector2 a;
-        public Vector2 b;
+        public Vertex2 a;
+        public Vertex2 b;
 
-        public VertexSegment(Vector2 a, Vector2 b)
+        public VertexSegment(Vertex2 a, Vertex2 b)
         {
             this.a = a;
             this.b = b;
@@ -47,17 +47,17 @@ namespace VectorTerrain.Scripts.Types
         /// <summary>
         ///     Returns the normalized direction of the vertexSegment
         /// </summary>
-        public Vector2 direction => (b - a).normalized;
+        public Vector2 direction => (b.Pos - a.Pos).normalized;
 
         /// <summary>
         ///     Returns the normal of the vertexSegment
         /// </summary>
-        public Vector2 normal => (b - a).normalized.RotateCCW90();
+        public Vector2 normal => (b.Pos - a.Pos).normalized.RotateCCW90();
 
         /// <summary>
         ///     Returns the length of the vertexSegment
         /// </summary>
-        public float length => (b - a).magnitude;
+        public float length => (b.Pos - a.Pos).magnitude;
 
         /// <summary>
         ///     Returns the center of the vertexSegment
@@ -113,11 +113,10 @@ namespace VectorTerrain.Scripts.Types
             return a.Equals(other.a) && b.Equals(other.b);
         }
 
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            return string.Format("VertexSegment(a: {0}, b: {1})", a.ToString(format, formatProvider),
-                b.ToString(format, formatProvider));
-        }
+        // public string ToString(string format, IFormatProvider formatProvider)
+        // {
+        //     return $"[{a.ToString(format, formatProvider)}, {b.ToString(format, formatProvider)}]";
+        // }
 
         /// <summary>
         ///     Returns a point on the vertexSegment at the given normalized position
@@ -197,22 +196,22 @@ namespace VectorTerrain.Scripts.Types
             return string.Format("VertexSegment(a: {0}, b: {1})", a, b);
         }
 
-        public string ToString(string format)
-        {
-            return string.Format("VertexSegment(a: {0}, b: {1})", a.ToString(format), b.ToString(format));
-        }
+        // public string ToString(string format)
+        // {
+        //     return string.Format("VertexSegment(a: {0}, b: {1})", a.ToString(format), b.ToString(format));
+        // }
 
 
         #region Casting operators
 
         public static explicit operator Line2(VertexSegment vertexSegment)
         {
-            return new(vertexSegment.a, (vertexSegment.b - vertexSegment.a).normalized);
+            return new(vertexSegment.a, (vertexSegment.b.Pos - vertexSegment.a.Pos).normalized);
         }
 
         public static explicit operator Ray2D(VertexSegment vertexSegment)
         {
-            return new(vertexSegment.a, (vertexSegment.b - vertexSegment.a).normalized);
+            return new(vertexSegment.a, (vertexSegment.b.Pos - vertexSegment.a.Pos).normalized);
         }
 
         public static explicit operator Segment3(VertexSegment vertexSegment)

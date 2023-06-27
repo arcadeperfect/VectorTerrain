@@ -41,6 +41,19 @@ namespace VectorTerrain.Scripts.Graph
             totalDistanceSoFar = previousSectorController.distCounter;
             totalPointsSoFar = previousSectorController.pointCounter;
         }
+        
+        public TerrainGraphInput(TerrainGraphOutput previousTerrainGraphOutput)
+        {
+            //todo properly validate the data from the graph
+
+            StartPos = previousTerrainGraphOutput.SectorData.Verts[^1];
+            StartVector = previousTerrainGraphOutput.SectorData.Verts[^1] - previousTerrainGraphOutput.SectorData.Verts[^2];
+            zOffset = previousTerrainGraphOutput.SectorData.zOffset;
+            seedDict = previousTerrainGraphOutput.SectorData.EndSeeds;
+            generation = previousTerrainGraphOutput.Generation + (int) Mathf.Sign(previousTerrainGraphOutput.Generation);
+            totalDistanceSoFar = previousTerrainGraphOutput.TotalDistanceAtEnd;
+            totalPointsSoFar = previousTerrainGraphOutput.TotalPointsAtEnd;
+        }
 
         public override string ToString()
         {
@@ -59,15 +72,15 @@ namespace VectorTerrain.Scripts.Graph
 
     public class TerrainGraphOutput
     {
-        public int generation;
+        public int Generation;
 
         // public Dictionary<string, List<Plot>> PlotListDict;
-        public List<Plot> plotList;
-        public SectorData sectorData;
-        public float totalDistanceAtEnd;
-        public float totalDistanceAtStart;
+        public List<Plot> PlotList;
+        public SectorData SectorData;
+        public float TotalDistanceAtEnd;
+        public float TotalDistanceAtStart;
 
-        public int totalPointsAtEnd;
+        public int TotalPointsAtEnd;
         // public float ZOffset;
     }
 

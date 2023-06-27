@@ -4,6 +4,7 @@ using System.Linq;
 using ProceduralToolkit;
 using UnityEngine;
 using VectorTerrain.Scripts.Utils;
+using Random = UnityEngine.Random;
 
 namespace VectorTerrain.Scripts.Types
 {
@@ -37,6 +38,10 @@ namespace VectorTerrain.Scripts.Types
         private float? _totalDistance;
         private List<Vertex2> _verts;
 
+        private int _generation;
+        
+        
+        
         // public List<Attr> VertexProperties;
         // public List<Attr> SegmentAttrs;
         // public Dictionary<string, List<Attr>> SegmentAttrs;
@@ -58,6 +63,7 @@ namespace VectorTerrain.Scripts.Types
 
         public SectorData(bool initVecs)
         {
+
             if (initVecs)
                 Verts = new List<Vertex2> {Vector2.zero, Vector2.right};
             Verts = !initVecs ? new List<Vertex2>() : new List<Vertex2> {Vector2.zero, Vector2.right};
@@ -538,6 +544,18 @@ namespace VectorTerrain.Scripts.Types
             {
                 return $"{t} : {value}";
             }
+        }
+        
+        public void RandomizeColor()
+        {
+            float h = Random.Range(0f, 1f);
+            var r2 = Color.HSVToRGB(h, 0.9f, 1f);
+            SetColor(r2);
+        }
+        public void RandomizeColor(int seed)
+        {
+            Random.InitState(seed);
+            RandomizeColor();
         }
     }
 

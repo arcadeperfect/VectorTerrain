@@ -54,6 +54,9 @@ namespace VectorTerrain.Scripts.Utils
         /// <exception cref="ArgumentException"></exception>
         public static List<Vertex2> Gaussian(List<Vertex2> inputLine, float sigma, int windowSize = 5)
         {
+            
+            if (windowSize % 2 == 0) windowSize++;
+            
             if (inputLine == null || inputLine.Count < 2)
                 throw new ArgumentException("Input line must contain at least two points.");
 
@@ -75,7 +78,17 @@ namespace VectorTerrain.Scripts.Utils
 
             var xSmoothed = ApplyGaussianFilter(xInput, gaussianKernel);
             var ySmoothed = ApplyGaussianFilter(yInput, gaussianKernel);
-            for (var i = 0; i < n; i++) smoothedLine.Add( new Vertex2(xSmoothed[i], ySmoothed[i]));
+
+            for (var i = 0; i < n; i++)
+            {
+                var thisVert = inputLine[i];
+                thisVert.x = xSmoothed[i];
+                thisVert.y = ySmoothed[i];
+                smoothedLine.Add(thisVert);
+            }
+            
+            
+            // for (var i = 0; i < n; i++) smoothedLine.Add( new Vertex2(xSmoothed[i], ySmoothed[i]));
 
             // Maintain the beginning and end points
             smoothedLine[0] = inputLine[0];

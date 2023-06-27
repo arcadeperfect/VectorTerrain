@@ -140,7 +140,7 @@ namespace VectorTerrain.Scripts.Graph
             startDist = terrainGraphInput.totalDistanceSoFar;
 
             var returnGraphOutput = new TerrainGraphOutput();
-            returnGraphOutput.totalDistanceAtStart = input.totalDistanceSoFar;
+            returnGraphOutput.TotalDistanceAtStart = input.totalDistanceSoFar;
 
             SetSeeds(input.seedDict);
             Generation = input.generation;
@@ -162,19 +162,19 @@ namespace VectorTerrain.Scripts.Graph
             retrievedSectorData.EndSeeds = GetSeeds();
             retrievedSectorData.zOffset = terrainGraphInput.zOffset;
 
-            returnGraphOutput.sectorData = retrievedSectorData;
-            returnGraphOutput.generation = input.generation;
+            returnGraphOutput.SectorData = retrievedSectorData;
+            returnGraphOutput.Generation = input.generation;
 
             // if (retrievedSectorData.TotalLengh == null)
             // 	throw new NullReferenceException("outputSector distances were not computed");
 
-            returnGraphOutput.totalDistanceAtEnd = retrievedSectorData.TotalLengh + startDist;
-            returnGraphOutput.totalPointsAtEnd = retrievedSectorData.Verts.Count + startPoints;
+            returnGraphOutput.TotalDistanceAtEnd = retrievedSectorData.TotalLengh + startDist;
+            returnGraphOutput.TotalPointsAtEnd = retrievedSectorData.Verts.Count + startPoints;
 
             // Debug.Log(graphPlotList[0].YVals[0]);
 
 
-            returnGraphOutput.plotList = graphPlotList;
+            returnGraphOutput.PlotList = graphPlotList;
 
             return returnGraphOutput;
         }

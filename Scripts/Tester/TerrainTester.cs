@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Nodez.Nodes;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
+using VectorTerrain.Scripts.Sector.SectorGroupPostProcessing;
 using VectorTerrain.Scripts.Terrain;
 
 namespace VectorTerrain.Scripts.Tester
@@ -14,11 +16,15 @@ namespace VectorTerrain.Scripts.Tester
     {
         [Required] public TerrainGraph terrainGraph;
 
+        public bool postDeIntersect;
+        public bool postBlur;
+
         public bool active = true;
         public int seed;
         [Min(1)] public int sectors;
         public VisualiserConfig visualiserConfig;
-        public Dictionary<int, SectorController> SectorDict;
+        public Dictionary<int, SectorController> SectorControllerDict;
+        private Dictionary<int, TerrainGraphOutput> _terrainGraphOutputDict;
         private TerrainContainerManager _terrainContainerManager;
         private Transform _terrainContainer;
         private bool _initted;
@@ -80,8 +86,10 @@ namespace VectorTerrain.Scripts.Tester
 
             _terrainContainer = _terrainContainerManager.Init();
         
-            SectorDict = new Dictionary<int, SectorController>();
-
+            SectorControllerDict = new Dictionary<int, SectorController>();
+            _terrainGraphOutputDict = new Dictionary<int, TerrainGraphOutput>();
+            
+            
             if (!ValidateVariables())
                 return;
 
@@ -143,22 +151,61 @@ namespace VectorTerrain.Scripts.Tester
             VectorTerrainGlobals.GlobalSeed = seed;
             DestroyAllSectorControllers();
 
-            // if (!_initted) throw new TerrainExceptions.NotInitialisedException("Terrain Tester");
             if (!_initted) return;
         
-            {
-                var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(0, 0));
-                SectorDict[0] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
-            }
-
+            
+            _terrainGraphOutputDict[0] = GetDataFromGraph(new TerrainGraphInput(0, 0));
+            
             for (var i = 1; i < sectors; i++)
             {
-                var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(SectorDict[i - 1]));
-                SectorDict[i] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
+                _terrainGraphOutputDict[i] = GetDataFromGraph(new TerrainGraphInput(_terrainGraphOutputDict[i - 1]));
             }
-        
+
+            if (postDeIntersect) _terrainGraphOutputDict = SectorGroupRemoveIntersections.Clean(_terrainGraphOutputDict);
+            if (postBlur) _terrainGraphOutputDict = SectorGroupBlur.Blur(_terrainGraphOutputDict, 10, 20);
+            
+            for (var i = 0; i < sectors; i++)
+            {
+                // SectorControllerDict[i].sectorData.RandomizeColor();
+                _terrainGraphOutputDict[i].SectorData.RandomizeColor(i);
+                SectorControllerDict[i] = SectorController.New(_terrainGraphOutputDict[i], _terrainContainer, visualiserConfig);
+            }
+            
+            
+            // {
+            //     var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(0, 0));
+            //     SectorControllerDict[0] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
+            // }
+            //
+            // for (var i = 1; i < sectors; i++)
+            // {
+            //     var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(SectorControllerDict[i - 1]));
+            //     SectorControllerDict[i] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
+            // }
+            
             SectorGenerationDone?.Invoke();
         }
+        
+        // public void GenerateSectors()
+        // {
+        //     VectorTerrainGlobals.GlobalSeed = seed;
+        //     DestroyAllSectorControllers();
+        //
+        //     if (!_initted) return;
+        //
+        //     {
+        //         var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(0, 0));
+        //         SectorControllerDict[0] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
+        //     }
+        //
+        //     for (var i = 1; i < sectors; i++)
+        //     {
+        //         var terrainGraphOutput = GetDataFromGraph(new TerrainGraphInput(SectorControllerDict[i - 1]));
+        //         SectorControllerDict[i] = SectorController.New(terrainGraphOutput, _terrainContainer, visualiserConfig);
+        //     }
+        //     
+        //     SectorGenerationDone?.Invoke();
+        // }
     
         private void DestroyAllSectorControllers()
         {

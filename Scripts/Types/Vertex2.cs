@@ -1,6 +1,7 @@
 ﻿using System;
 using Shapes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 // public class Vertex2Node
 // {
@@ -112,6 +113,11 @@ namespace VectorTerrain.Scripts.Types
 
         private Color colorGenerator;
 
+
+
+        public int? id; //todo replace with proper attributes from previous version
+        
+        
         /// <summary>
         ///     Return distance from this Vertex to the previous one
         /// </summary>
@@ -130,6 +136,7 @@ namespace VectorTerrain.Scripts.Types
             thickness = THICKNESS_DEFAULT;
             Dist = null;
             TotalDist = null;
+            id = null;
         }
 
         public Vertex2(Vector2 initVec, Vector2 Normal)
@@ -140,6 +147,7 @@ namespace VectorTerrain.Scripts.Types
             thickness = THICKNESS_DEFAULT;
             Dist = null;
             TotalDist = null;
+            id = null;
         }
 
         public Vertex2(Vector2 initVec)
@@ -150,6 +158,7 @@ namespace VectorTerrain.Scripts.Types
             thickness = THICKNESS_DEFAULT;
             Dist = null;
             TotalDist = null;
+            id = null;
         }
 
         public Vertex2(Vector2 initVec, Color color)
@@ -160,6 +169,7 @@ namespace VectorTerrain.Scripts.Types
             thickness = THICKNESS_DEFAULT;
             Dist = null;
             TotalDist = null;
+            id = null;
         }
 
         public Vertex2(Vector2 initVec, Color color, float thickness)
@@ -170,6 +180,7 @@ namespace VectorTerrain.Scripts.Types
             normal = NormalDefault;
             Dist = null;
             TotalDist = null;
+            id = null;
         }
 
         public Vertex2(float x, float y)
@@ -180,6 +191,7 @@ namespace VectorTerrain.Scripts.Types
             normal = NormalDefault;
             Dist = null;
             TotalDist = null;
+            id = null;
         }
 
         public Color Color

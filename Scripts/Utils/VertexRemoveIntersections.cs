@@ -52,8 +52,8 @@ public static class VertexRemoveIntersections
                 }
             }
 
-            if (intersectionFound == false)
-                Debug.Log("removeIntersections took " + counter);
+            // if (intersectionFound == false)
+            //     Debug.Log("removeIntersections took " + counter);
             counter++;
         }
 

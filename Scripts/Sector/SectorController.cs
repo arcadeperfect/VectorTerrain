@@ -73,21 +73,21 @@ namespace VectorTerrain.Scripts.Sector
         {
             if (graphOutput == null) return null;
 
-            ValidateSectorData(graphOutput.sectorData);
+            ValidateSectorData(graphOutput.SectorData);
             var newSector = new GameObject();
             newSector.transform.parent = parent;
-            newSector.name = $"Terrain Object {graphOutput.generation}";
+            newSector.name = $"Terrain Object {graphOutput.Generation}";
             var controller = newSector.AddComponent<SectorController>();
-            controller.InitSectorData(graphOutput.sectorData);
-            controller.Generation = graphOutput.generation;
+            controller.InitSectorData(graphOutput.SectorData);
+            controller.Generation = graphOutput.Generation;
             controller.viz = viz;
-            controller.distCounter = graphOutput.totalDistanceAtEnd;
-            controller.pointCounter = graphOutput.totalPointsAtEnd;
+            controller.distCounter = graphOutput.TotalDistanceAtEnd;
+            controller.pointCounter = graphOutput.TotalPointsAtEnd;
             // controller.Plotz = graphOutput.PlotListDict;
             controller.Prefabs = InstantiatePrefabs(graphOutput);
             controller.graphOutput = graphOutput; // todo just pass in this and be done with it, do not pass in all those variables above one by one. Also don't pass in the sectordata twice.
             controller.grassRenderer = controller.AddComponent<TerrainGrassRenderer>();
-            controller.BottyPlot = new List<Plot>(graphOutput.plotList);
+            controller.BottyPlot = new List<Plot>(graphOutput.PlotList);
 
             // Debug.Log(controller.BottyPlot[0].YVals[0]);
 
@@ -206,6 +206,8 @@ namespace VectorTerrain.Scripts.Sector
 
             this.sectorData = sectorData;
 
+           
+            
             startPositionObj = new GameObject();
             startPositionObj.name = "Start";
             startPositionObj.transform.parent = transform;
