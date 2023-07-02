@@ -20,8 +20,8 @@ namespace Terrain
             pl.Joins = PolylineJoins.Round;
             pl.Geometry = settings.Geometry;
             PopulatePolyLine(sectorData);
-            pl.Color = new Color(5, 5, 5, 5);
-            // pl.Thickness = 0.5f;
+            // pl.Color = new Color(5, 5, 5, 5);
+            pl.Thickness = 0.5f;
         }
 
         private void PopulatePolyLine(SectorData sectorData)

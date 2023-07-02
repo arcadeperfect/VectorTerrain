@@ -18,7 +18,6 @@ public static class VertexRemoveIntersections
     {
         
         bool intersectionFound = true;
-
         int counter = 0;
         
         while (intersectionFound)

@@ -9,12 +9,15 @@ using VectorTerrain.Scripts.Sector.SectorGroupPostProcessing;
 using VectorTerrain.Scripts.Terrain;
 using VectorTerrain.Scripts.Tester;
 using VectorTerrain.Scripts.Types;
+using VectorTerrain.Scripts.Utils;
+using Random = UnityEngine.Random;
 
 namespace VectorTerrain.Scripts
 {
     public class VectorTerrainGeneratorAsync : MonoBehaviour
     {
         public bool clean;
+
         public int taskCount
         {
             get => _taskDict.Count;
@@ -90,6 +93,7 @@ namespace VectorTerrain.Scripts
                 new TerrainGraphInput(
                     previousSectorController)); // generate 2nd forward sector from previous forward sector
             _initted = true;
+            Debug.Log("initted");
         }
 
         public void Advance()
@@ -156,102 +160,92 @@ namespace VectorTerrain.Scripts
             _taskDict.Remove(id - 1);
         }
 
-        public bool AreTasksRunning()
-        {
-            return _taskDict.Values.Any(task => !task.IsCompleted);
-        }
+        public bool AreTasksRunning() => _taskDict.Values.Any(task => !task.IsCompleted);
 
 
-        private SectorController TailSector()
-        {
-            return _sectorControllerDict[_sectorControllerDict.Keys.Max()];
-        }
+        private SectorController TailSector() => _sectorControllerDict[_sectorControllerDict.Keys.Max()];
 
-        SectorController HeadSector()
-        {
-            return _sectorControllerDict[_sectorControllerDict.Keys.Min()];
-        }
+        SectorController HeadSector() => _sectorControllerDict[_sectorControllerDict.Keys.Min()];
 
-        int HighestGeneration()
-        {
-            return TailSector().Generation;
-        }
+        int HighestGeneration() => TailSector().Generation;
 
-        int LowestGeneration()
-        {
-            return HeadSector().Generation;
-        }
+        int LowestGeneration() => HeadSector().Generation;
+
 
         async Task<SectorController> InstantiateSector(TerrainGraphInput input)
         {
-            var g = _graph.Copy() as TerrainGraph;
-
             int gen = input.generation;
-
-            TerrainGraphInput inputBefore;
-            TerrainGraphInput inputAfter;
-
-            TerrainGraphOutput output;
-            TerrainGraphOutput outputBefore;
-            TerrainGraphOutput outputAfter;
-
-            if (gen > 0)
-            {
-                inputBefore = _inputDict[gen - 1];
-                outputBefore = await Task.Run(() => g.GetGraphOutput(inputBefore, false));
-                output = await Task.Run(() => g.GetGraphOutput(input, false));
-
-                inputAfter = new TerrainGraphInput(output);
-                outputAfter = await Task.Run(() => g.GetGraphOutput(inputAfter, false));
-
-                if (clean)
-                {
-                    var dict = new Dictionary<int, TerrainGraphOutput>
-                        { { gen - 1, outputBefore }, { gen, output }, { gen + 1, outputAfter } };
-
-                    var result = await SectorGroupRemoveIntersections.CleanAsync(dict);
-                    output = result[gen];
-                }
-
-                var v = SectorDict[gen - 1].sectorData.Verts[^1].Pos;
-                var w = output.SectorData.Verts[0].Pos;
-                var diff = w - v;
-                List<Vertex2> offsettedVerts = new(); 
-                foreach (var vert in output.SectorData.Verts)
-                {
-                    var newVert = vert;
-                    newVert.Pos -= diff;
-                    offsettedVerts.Add(newVert);
-                }
-                output.SectorData.Verts = offsettedVerts;
-            }
-            else
-            {
-                output = await Task.Run(() => g.GetGraphOutput(input, false));
-            }
-
-
-            // could be expensive but must run on main thread. Coroutines?
-            var newSectorController = SectorController.New(output, _terrainContainer, new VisualiserConfig());
-
-            _sectorControllerDict[newSectorController.Generation] = newSectorController;
-            if (!_inputDict.Keys.Contains(newSectorController.Generation))
-                _inputDict[newSectorController.Generation] = input;
-
-            return newSectorController;
-        }
-
-        async Task<SectorController> InstantiateSectorOld(TerrainGraphInput input)
-        {
             var g = _graph.Copy() as TerrainGraph;
 
             // slow function, run on separate thread
             var graphOutput = await Task.Run(() => g.GetGraphOutput(input, false));
 
-            // could be expensive but must run on main thread. Coroutines?
+            if (clean)
+            {
+                if (gen > 0)
+                {
+                    SectorController previousSectorController;
+                    SectorData previousSectorData;
+                    
+                    // if the previous sector has already been generated, use that
+                    if (_sectorControllerDict.TryGetValue(gen - 1, out previousSectorController))
+                    {
+                        previousSectorData = previousSectorController.sectorData;
+                        var thisSectorData = graphOutput.SectorData;
+                        await Task.Run(() => TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
+                        Debug.Log( thisSectorData.Verts[^1]);
+                        try
+                        {
+                            input.EndPos = thisSectorData.Verts[^1];
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.Log(e);
+                            throw;
+                        }
+                    }
+                    else // otherwise, use the input to regenerate the previous sector
+                    {
+                        // the previous input must exist to regenerate the previous sector
+                        var previousInputExists = _inputDict.TryGetValue(gen - 1, out var previousInput);
+                        if (previousInputExists)
+                        {
+                            var previousGraphOutput = await GetGraphOutput(previousInput);
+                            previousSectorData = previousGraphOutput.SectorData;
+                            var thisSectorData = graphOutput.SectorData;
+                            // var endPos = previousInput.EndPos;
+                            // thisSectorData.SetEndPos(endPos);
+                            await Task.Run(() => TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
+                            try
+                            {
+                                input.EndPos = thisSectorData.Verts[^1];
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.Log(e);
+                                throw;
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("The previous input does not exist. Cannot clean.");
+                        }
+                    }
+                }
+            }
+
+            
+            
+            Random.InitState(gen);
+            
+            Color c = Color.HSVToRGB(Random.value, 1, 15, true);
+            graphOutput.SectorData.SetColor(c);
+        
+            
             var newSectorController = SectorController.New(graphOutput, _terrainContainer, new VisualiserConfig());
 
             _sectorControllerDict[newSectorController.Generation] = newSectorController;
+            
             if (!_inputDict.Keys.Contains(newSectorController.Generation))
                 _inputDict[newSectorController.Generation] = input;
 

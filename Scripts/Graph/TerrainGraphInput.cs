@@ -6,7 +6,7 @@ using VectorTerrain.Scripts.Types;
 
 namespace VectorTerrain.Scripts.Graph
 {
-    public struct TerrainGraphInput
+    public class TerrainGraphInput
     {
         public float totalDistanceSoFar;
         public float zOffset;
@@ -14,6 +14,7 @@ namespace VectorTerrain.Scripts.Graph
         public int totalPointsSoFar;
         public Vertex2 StartPos;
         public Vertex2 StartVector;
+        public Vertex2 EndPos;
         public Dictionary<string, SeedContainer> seedDict;
         
         // for creating the first generation from nothing

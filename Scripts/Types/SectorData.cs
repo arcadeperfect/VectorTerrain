@@ -136,15 +136,39 @@ namespace VectorTerrain.Scripts.Types
             LocalEnd = _verts[^1];
         }
 
-        public void SetPos(List<Vertex2> Verts)
+        public void SetStartPos(Vector2 startPos)
         {
+            Vector2 diff = Verts[0] - startPos;
+            
             for (var i = 0; i < Verts.Count; i++)
             {
                 var v = Verts[i];
-                v.Pos = new Vector2(1, 2);
+                v.Pos -= diff;
                 Verts[i] = v;
             }
         }
+        
+        public void SetEndPos(Vector2 endPos)
+        {
+            Vector2 diff = Verts[^1] - endPos;
+            
+            for (var i = 0; i < Verts.Count; i++)
+            {
+                var v = Verts[i];
+                v.Pos -= diff;
+                Verts[i] = v;
+            }
+        }
+
+        // public void SetPos(List<Vertex2> Verts)
+        // {
+        //     for (var i = 0; i < Verts.Count; i++)
+        //     {
+        //         var v = Verts[i];
+        //         v.Pos = new Vector2(1, 2);
+        //         Verts[i] = v;
+        //     }
+        // }
 
         public void ProcessDistances()
         {

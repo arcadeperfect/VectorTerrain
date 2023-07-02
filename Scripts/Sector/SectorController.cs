@@ -206,8 +206,6 @@ namespace VectorTerrain.Scripts.Sector
 
             this.sectorData = sectorData;
 
-           
-            
             startPositionObj = new GameObject();
             startPositionObj.name = "Start";
             startPositionObj.transform.parent = transform;

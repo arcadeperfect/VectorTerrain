@@ -90,11 +90,11 @@ public static class GeometeryUtils2D
     
     
     // doesn't return intersection point, just bool
-    public static bool FasterLineIntersection(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4) {
+    public static bool FasterLineIntersection(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2) {
    
-        Vector2 a = p2 - p1;
-        Vector2 b = p3 - p4;
-        Vector2 c = p1 - p3;
+        Vector2 a = a2 - a1;
+        Vector2 b = b1 - b2;
+        Vector2 c = a1 - b1;
    
         float alphaNumerator = b.y*c.x - b.x*c.y;
         float alphaDenominator = a.y*b.x - a.x*b.y;
