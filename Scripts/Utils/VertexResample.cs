@@ -60,6 +60,62 @@ namespace VectorTerrain.Scripts.Utils
 
             return resampledVerts;
         }
+        
+        
+        public static List<Vertex2> Resample(List<Vertex2> verts, float newAmount, ResampleMode mode)
+        {
+            switch (mode)
+            {
+                case ResampleMode.fraction:
+                {
+                    var v = newAmount *verts.Count;
+                    return Resample(verts, (int) v);
+                }
+                case ResampleMode.distance:
+                {
+                    var newVerts = new SectorData();
+                    var totatlDistance = VertexProcessing.CalculateTotalDistance(verts);
+                    var v = totatlDistance / newAmount;
+                    return Resample(verts, (int) v);
+                }
+                case ResampleMode.points:
+                {
+                    return Resample(verts, (int)newAmount);
+                }
+            }
+            throw new System.Exception("Invalid ResampleMode");
+        }
+        
+        public static List<Vertex2> Resample(List<Vertex2> verts, int numPoints)
+        {
+            if (numPoints < 2)
+                return verts;
+        
+            if (verts.Count < 2)
+                return verts;
+        
+        
+            numPoints = math.max(1, numPoints);
+            float t = 1f / numPoints;
+
+            float u = 0;
+
+            List<Vertex2> resampledVerts = new List<Vertex2>();
+        
+            float totalDist = VertexProcessing.CalculateTotalDistance(verts);
+        
+            for (int i = 0; i < numPoints; i++)
+            {
+                var v = VertexTraverse.Traverse(verts, u, true);
+                resampledVerts.Add(v);
+                u += t;
+            }
+        
+            resampledVerts.Add(verts[^1]);
+
+            return resampledVerts;
+        }
+        
 
         public enum ResampleMode
         {

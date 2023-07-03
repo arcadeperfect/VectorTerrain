@@ -175,7 +175,9 @@ namespace VectorTerrain.Scripts.Graph
 
 
             returnGraphOutput.PlotList = graphPlotList;
-
+            
+            returnGraphOutput.SectorData.ComputeAverageLine();
+            
             return returnGraphOutput;
         }
 

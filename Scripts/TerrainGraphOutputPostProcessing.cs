@@ -10,16 +10,23 @@ namespace VectorTerrain.Scripts
 
         public static void Clean(SectorData previous, SectorData current)
         {
-            Debug.Log("cleaning");
             int index;
             if (FindLastIntersection(previous.Verts, current.Verts, out index))
             {
                 current.Verts.RemoveRange(0, index);
+
+                int blurRange = 50;
+                
+                // // force blurRange to be odd
+                // if (blurRange % 2 == 0)
+                // {
+                //     blurRange++;
+                // }
+                
+                var range1 = previous.Verts.GetRange(previous.Verts.Count - blurRange/2, blurRange/2);
+                var range2 = current.Verts.GetRange(0, blurRange/2);
+                
                 current.SetStartPos(previous.Verts[^1]);
-            }
-            else
-            {
-                Debug.Log("not found");
             }
         }
         

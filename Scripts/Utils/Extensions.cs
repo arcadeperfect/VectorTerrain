@@ -26,5 +26,15 @@ namespace VectorTerrain.Scripts.Utils
             }
             return returnMe;
         }
+        
+        public static Vector2[] ToVector2Array(this List<Vertex2> list)
+        {
+            var returnMe = new Vector2[list.Count];
+            for (int i = 0; i < list.Count; i++)
+            {
+                returnMe[i] = (Vector2) list[i];
+            }
+            return returnMe;
+        }
     }
 }

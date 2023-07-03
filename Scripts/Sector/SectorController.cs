@@ -3,11 +3,13 @@ using ProceduralToolkit;
 using Terrain;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Terrain;
 using VectorTerrain.Scripts.Tester;
 using VectorTerrain.Scripts.Types;
 using VectorTerrain.Scripts.Types.Exceptions;
+using VectorTerrain.Scripts.Utils;
 
 namespace VectorTerrain.Scripts.Sector
 {
@@ -27,9 +29,11 @@ namespace VectorTerrain.Scripts.Sector
 
         private bool _initted;
 
+        // public List<Vertex2> averageLine;
+        
         // public Dictionary<string, List<Plot>> Plotz;
-        public List<Plot> BottyPlot;
-        public TerrainGraphOutput graphOutput;
+        private List<Plot> BottyPlot;
+        private TerrainGraphOutput graphOutput;
         private TerrainGrassRenderer grassRenderer;
         private List<GameObject> Prefabs;
 
@@ -38,20 +42,17 @@ namespace VectorTerrain.Scripts.Sector
         public Transform Start => startPositionObj.transform;
         public Transform End => endPositionObj.transform;
 
-        private void OnDrawGizmos()
-        {
-            Visualise(BottyPlot);
-        }
+        private void OnDrawGizmos() => Visualise(BottyPlot);
 
         public void SetColor(Color color)
         {
-            for (var i = 0; i < sectorData.Verts.Count; i++)
-            {
-                var v = sectorData.Verts[i];
-                v.Color = color;
-                sectorData.Verts[i] = v;
-            }
-
+            sectorData.SetColor(color);
+            // for (var i = 0; i < sectorData.Verts.Count; i++)
+            // {
+            //     var v = sectorData.Verts[i];
+            //     v.Color = color;
+            //     sectorData.Verts[i] = v;
+            // }
             var settings = new PolyLineRenderSettings(VectorTerrainGlobals.PolylineGeometry);
             shapesRenderer.Init(sectorData, settings);
         }
@@ -74,10 +75,11 @@ namespace VectorTerrain.Scripts.Sector
             if (graphOutput == null) return null;
 
             ValidateSectorData(graphOutput.SectorData);
-            var newSector = new GameObject();
-            newSector.transform.parent = parent;
-            newSector.name = $"Terrain Object {graphOutput.Generation}";
-            var controller = newSector.AddComponent<SectorController>();
+            var sectorGameObject = new GameObject();
+            sectorGameObject.layer = LayerMask.NameToLayer("Terrain");
+            sectorGameObject.transform.parent = parent;
+            sectorGameObject.name = $"Terrain Object {graphOutput.Generation}";
+            var controller = sectorGameObject.AddComponent<SectorController>();
             controller.InitSectorData(graphOutput.SectorData);
             controller.Generation = graphOutput.Generation;
             controller.viz = viz;
@@ -89,12 +91,29 @@ namespace VectorTerrain.Scripts.Sector
             controller.grassRenderer = controller.AddComponent<TerrainGrassRenderer>();
             controller.BottyPlot = new List<Plot>(graphOutput.PlotList);
 
-            // Debug.Log(controller.BottyPlot[0].YVals[0]);
+            controller.shapesRenderer = controller.AddComponent<TerrainShapesRenderer>();
 
+
+            var averageLineGameObject = new GameObject();
+            averageLineGameObject.transform.parent = sectorGameObject.transform;
+            averageLineGameObject.name = "Average Line";
+            averageLineGameObject.layer = LayerMask.NameToLayer("AverageLine");
+            var averageLineCollider = averageLineGameObject.AddComponent<EdgeCollider2D>();
+            averageLineCollider.points = graphOutput.SectorData.AverageLine.ToVector2Array();
+            
+            
             controller._initted = true;
 
             return controller;
         }
+
+        // private void ComputeAverageLine()
+        // {
+        //     List<Vertex2> averageLine = new List<Vertex2>(sectorData.Verts);
+        //     averageLine = VertexProcessing.Gaussian(averageLine, 125, 125);
+        //     var newaverageLine = VertexResample.Resample(averageLine, 100, VertexResample.ResampleMode.distance);
+        //     this.averageLine = newaverageLine;
+        // }
 
         // public void TestPlots()
         // {

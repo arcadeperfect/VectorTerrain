@@ -38,6 +38,9 @@ namespace VectorTerrain.Scripts.Types
         private float? _totalDistance;
         private List<Vertex2> _verts;
 
+        private List<Vertex2> _averageLine = null;
+        public List<Vertex2> AverageLine => _averageLine;
+
         private int _generation;
         
         
@@ -525,6 +528,14 @@ namespace VectorTerrain.Scripts.Types
         //     n.Process();
         //     return n;
         // }
+        
+        public void ComputeAverageLine(float sigma = 125f, int windowSize = 25, int distance = 50)
+        {
+            List<Vertex2> averageLine = new List<Vertex2>(_verts);
+            averageLine = VertexProcessing.Gaussian(averageLine, sigma, windowSize);
+            // averageLine = VertexResample.Resample(averageLine, distance, VertexResample.ResampleMode.distance);
+            _averageLine = averageLine;
+        }
 
         public void Resample(float value, VertexResample.ResampleMode mode)
         {

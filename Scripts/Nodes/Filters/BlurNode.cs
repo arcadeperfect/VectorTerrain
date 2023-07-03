@@ -38,7 +38,10 @@ namespace VectorTerrain.Scripts.Nodes.Filters
             
             int w = windowSize;
             if (w % 2 == 0) w++;
-            input.Verts = VertexProcessing.Gaussian(input.Verts, blurAmount, w);
+            var normal = MathsFilters.NormalDistribution(input.Verts.Count);
+            input.Verts = VertexProcessing.Gaussian(input.Verts, normal, blurAmount, w);
+            // input.Verts = VertexProcessing.Gaussian(input.Verts, blurAmount, w);
+
             return input;
         }
     }

@@ -48,7 +48,7 @@ namespace VectorTerrain.Scripts
             get => _initted;
         }
 
-        public SectorController middleSectorController
+        public SectorController MiddleSectorController
         {
             get
             {
@@ -58,7 +58,8 @@ namespace VectorTerrain.Scripts
             }
         }
 
-        public async Task Init(int seed)
+
+        public async Task InitAsync(int seed)
         {
             Debug.Log("Initializing VectorTerrainGeneratorAsync");
 
@@ -131,13 +132,10 @@ namespace VectorTerrain.Scripts
             TerrainGraphInput input;
 
             if (_inputDict.Keys.Contains(HighestGeneration() + 1))
-            {
                 input = _inputDict[HighestGeneration() + 1];
-            }
+
             else
-            {
                 input = new TerrainGraphInput(_sectorControllerDict[HighestGeneration()]);
-            }
 
             await InstantiateSector(input);
 
@@ -174,11 +172,11 @@ namespace VectorTerrain.Scripts
 
         async Task<SectorController> InstantiateSector(TerrainGraphInput input)
         {
-            int gen = input.generation;
-            var g = _graph.Copy() as TerrainGraph;
+            var gen = input.generation;
+            var graph = _graph.Copy() as TerrainGraph;
 
             // slow function, run on separate thread
-            var graphOutput = await Task.Run(() => g.GetGraphOutput(input, false));
+            var graphOutput = await Task.Run(() => graph.GetGraphOutput(input, false));
 
             if (clean)
             {
@@ -186,14 +184,14 @@ namespace VectorTerrain.Scripts
                 {
                     SectorController previousSectorController;
                     SectorData previousSectorData;
-                    
+
                     // if the previous sector has already been generated, use that
                     if (_sectorControllerDict.TryGetValue(gen - 1, out previousSectorController))
                     {
                         previousSectorData = previousSectorController.sectorData;
                         var thisSectorData = graphOutput.SectorData;
-                        await Task.Run(() => TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
-                        Debug.Log( thisSectorData.Verts[^1]);
+                        await Task.Run(() =>
+                            TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
                         try
                         {
                             input.EndPos = thisSectorData.Verts[^1];
@@ -210,14 +208,15 @@ namespace VectorTerrain.Scripts
                         var previousInputExists = _inputDict.TryGetValue(gen - 1, out var previousInput);
                         if (previousInputExists)
                         {
+                            // regenerate the previous sector
                             var previousGraphOutput = await GetGraphOutput(previousInput);
                             previousSectorData = previousGraphOutput.SectorData;
                             var thisSectorData = graphOutput.SectorData;
-                            // var endPos = previousInput.EndPos;
-                            // thisSectorData.SetEndPos(endPos);
-                            await Task.Run(() => TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
+                            await Task.Run(() =>
+                                TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
                             try
                             {
+                                // store the end position which can get modified in the cleaning process, because the verts are all offset if any are removed such that the first vert is coincident with the previous last vert
                                 input.EndPos = thisSectorData.Verts[^1];
                             }
                             catch (Exception e)
@@ -233,19 +232,13 @@ namespace VectorTerrain.Scripts
                     }
                 }
             }
+            
+            graphOutput.SectorData.SetColor(ColorExtensions.RandomBrightColor(gen));
 
-            
-            
-            Random.InitState(gen);
-            
-            Color c = Color.HSVToRGB(Random.value, 1, 15, true);
-            graphOutput.SectorData.SetColor(c);
-        
-            
             var newSectorController = SectorController.New(graphOutput, _terrainContainer, new VisualiserConfig());
 
             _sectorControllerDict[newSectorController.Generation] = newSectorController;
-            
+
             if (!_inputDict.Keys.Contains(newSectorController.Generation))
                 _inputDict[newSectorController.Generation] = input;
 

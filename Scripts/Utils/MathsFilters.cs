@@ -46,5 +46,17 @@ namespace VectorTerrain.Scripts.Utils
             }
             return weights;
         }
+        
+        public static List<float> NormalDistribution(int length)
+        {
+            // Define the parameters of the Gaussian function
+            float a = 1f;
+            float b = length / 2f;
+            float c = length / (2f * Mathf.Sqrt(2 * Mathf.Log(2)));  // FWHM
+
+            return Enumerable.Range(0, length)
+                .Select(i => a * Mathf.Exp(-Mathf.Pow(i - b, 2) / (2 * Mathf.Pow(c, 2))))
+                .ToList();
+        }
     }
 }

@@ -43,6 +43,24 @@ namespace VectorTerrain.Scripts.Utils
             }
             return totalDist;
         }
+
+        public static List<Vertex2> Gaussian(List<Vertex2> inputLine, List<float> mask, float sigma, int windowSize = 5)
+        {
+            List<Vertex2> original = new List<Vertex2>(inputLine);
+            List<Vertex2> smoothed = new List<Vertex2>(inputLine);
+            List<Vertex2> lerped = new List<Vertex2>(original.Count);
+            smoothed = Gaussian(smoothed, sigma, windowSize);
+            
+            for (int i = 0; i < original.Count; i++)
+            {
+                var v = original[i];
+                var v2 = smoothed[i];
+                var lerp = Vector2.Lerp(v, v2, mask[i]);
+                lerped.Add(lerp);
+            }
+            return lerped;
+        }
+        
         
         /// <summary>
         /// Apply Gaussian filter to a list of points
@@ -123,6 +141,23 @@ namespace VectorTerrain.Scripts.Utils
             }
 
             return outputData;
+        }
+        
+        
+        /// <summary>
+        /// Calculate the total distance of a Vertex2 list
+        /// </summary>
+        /// <param name="verts"></param>
+        /// <returns></returns>
+        public static float VertexPathLength(List<Vertex2> verts)
+        {
+            float totalDist = 0;
+            for (int i = 1; i < verts.Count; i++)
+            {
+                var temp = verts[i];
+                totalDist +=Vector2.Distance(verts[i - 1], verts[i]);
+            }
+            return totalDist;
         }
     }
 }

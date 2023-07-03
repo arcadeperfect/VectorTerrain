@@ -1,31 +1,25 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VectorTerrain.Scripts;
 using VectorTerrain.Scripts.Graph;
+using VectorTerrain.Scripts.Sector;
+using VectorTerrain.Scripts.Types;
 
 public class VectorTerrainManager : MonoBehaviour
 {
     public int seed;
     public Transform focus;
-
     public bool async;
-
     public TerrainGraph graph;
     
     private VectorTerrainGeneratorAsync _generatorAsync;
     private VectorTerrainGenerator _generator;
-
-    // private ITerrainGenerator _generatorInterface;
-
-
-    // private float _advanceThreshold = 0.51f;
     
+    public Dictionary<int, SectorController> SectorDict => _generatorAsync.SectorDict;
+
+
     private async void Awake()
     {
         if (async)
@@ -33,7 +27,7 @@ public class VectorTerrainManager : MonoBehaviour
             _generator = null;
             _generatorAsync = gameObject.GetComponent<VectorTerrainGeneratorAsync>();
             if (_generatorAsync == null) throw new Exception("GeneratorAsync component not found");
-            await _generatorAsync.Init(seed);
+            await _generatorAsync.InitAsync(seed);
         }
         
         else
@@ -44,7 +38,8 @@ public class VectorTerrainManager : MonoBehaviour
             _generator.Init(seed);
         }
     }
-
+    
+    
     private void LateUpdate()
     {
         if (async)
@@ -53,7 +48,7 @@ public class VectorTerrainManager : MonoBehaviour
             if (_generatorAsync.AreTasksRunning()) return;
             if (_generatorAsync == null) Debug.Log("generator async was null"); //todo remove when no longer needed
             
-            var activeSector = _generatorAsync.middleSectorController;
+            var activeSector = _generatorAsync.MiddleSectorController;
             var begin = activeSector.sectorData.LocalStart.x;
             var end = activeSector.sectorData.LocalEnd.x;
             var p = focus.position.x;
@@ -90,7 +85,9 @@ public class VectorTerrainManager : MonoBehaviour
                 Awake();
                 return;
             }
-            _generatorAsync.Init(seed);
+            _generatorAsync.InitAsync(seed);
+            // _generatorAsync.Init(seed);
+
         }
 
         else
@@ -131,5 +128,4 @@ public class VectorTerrainManager : MonoBehaviour
             _generator.Subvance();   
         }
     }
-
 }
