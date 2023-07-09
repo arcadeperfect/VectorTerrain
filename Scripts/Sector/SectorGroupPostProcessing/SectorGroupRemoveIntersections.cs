@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VectorTerrain.Scripts.Graph;
+using VectorTerrain.Scripts.Utils;
+using VectorTerrain.Scripts.Utils.Burst;
 using static VectorTerrain.Scripts.Sector.SectorGroupPostProcessing.SectorGroupPostProcessingUtils;
 
 namespace VectorTerrain.Scripts.Sector.SectorGroupPostProcessing
@@ -10,7 +12,7 @@ namespace VectorTerrain.Scripts.Sector.SectorGroupPostProcessing
         public static Dictionary<int, TerrainGraphOutput> Clean(Dictionary<int, TerrainGraphOutput> data)
         {
             var v = CompileVerts(data);
-            var w = VertexRemoveIntersections.Process(v, VertexRemoveIntersections.Mode.remove);
+            var w = VertexRemoveIntersectionsBurst.Process(v);
             var separateBySectorId = SeparateBySectorId(w);
             data = RepopulateDict(data, separateBySectorId);
             
@@ -21,7 +23,10 @@ namespace VectorTerrain.Scripts.Sector.SectorGroupPostProcessing
         {
             var v = CompileVerts(data);
             
-            var w = await Task.Run(() => VertexRemoveIntersections.Process(v, VertexRemoveIntersections.Mode.remove));
+            var w = await Task.Run(() => VertexRemoveIntersectionsBurst.Process(v));
+            // var w = await Task.Run(() => VertexRemoveIntersections.Process(v));
+
+            
             
             // var w = VertexRemoveIntersections.Process(v, VertexRemoveIntersections.Mode.remove);
             var separateBySectorId = SeparateBySectorId(w);

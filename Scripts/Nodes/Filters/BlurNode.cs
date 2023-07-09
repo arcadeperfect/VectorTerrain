@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 using VectorTerrain.Scripts.Attributes;
 using VectorTerrain.Scripts.Types;
 using VectorTerrain.Scripts.Utils;
+using VectorTerrain.Scripts.Utils.Burst;
 
 namespace VectorTerrain.Scripts.Nodes.Filters
 {
@@ -39,7 +40,10 @@ namespace VectorTerrain.Scripts.Nodes.Filters
             int w = windowSize;
             if (w % 2 == 0) w++;
             var normal = MathsFilters.NormalDistribution(input.Verts.Count);
-            input.Verts = VertexProcessing.Gaussian(input.Verts, normal, blurAmount, w);
+            
+            input.Verts = VertexGaussianBurst.Gaussian(input.Verts, blurAmount, w);
+            
+            // input.Verts = VertexProcessing.Gaussian(input.Verts, normal, blurAmount, w);
             // input.Verts = VertexProcessing.Gaussian(input.Verts, blurAmount, w);
 
             return input;

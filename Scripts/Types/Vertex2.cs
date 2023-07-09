@@ -1,5 +1,6 @@
 ﻿using System;
 using Shapes;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -95,6 +96,10 @@ using UnityEngine.Serialization;
 //     
 //     
 // }
+
+
+
+
 
 namespace VectorTerrain.Scripts.Types
 {
@@ -272,6 +277,11 @@ namespace VectorTerrain.Scripts.Types
 
         // allows auto casting to vector3
         public static implicit operator Vector3(Vertex2 self)
+        {
+            return self.Pos;
+        }
+        
+        public static implicit operator float2(Vertex2 self)
         {
             return self.Pos;
         }
