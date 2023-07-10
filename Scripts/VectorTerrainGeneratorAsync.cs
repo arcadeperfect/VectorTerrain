@@ -188,8 +188,11 @@ namespace VectorTerrain.Scripts
                     // if the previous sector has already been generated, use that
                     if (_sectorControllerDict.TryGetValue(gen - 1, out previousSectorController))
                     {
+                        // print("Using previous sector to clean");
                         previousSectorData = previousSectorController.sectorData;
                         var thisSectorData = graphOutput.SectorData;
+
+
                         await Task.Run(() =>
                             TerrainGraphOutputPostProcessing.Clean(previousSectorData, thisSectorData));
                         try
@@ -204,6 +207,7 @@ namespace VectorTerrain.Scripts
                     }
                     else // otherwise, use the input to regenerate the previous sector
                     {
+                        print ("Regenerating previous sector to clean");
                         // the previous input must exist to regenerate the previous sector
                         var previousInputExists = _inputDict.TryGetValue(gen - 1, out var previousInput);
                         if (previousInputExists)

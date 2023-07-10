@@ -24,19 +24,19 @@ namespace VectorTerrain.Scripts.Nodes.Filters
             //     input.Verts = VertexProximityFilterBurst.Process(input.Verts, MinDistance);
             // else 
                 
-            Stopwatch sw = new Stopwatch();
+            // Stopwatch sw = new Stopwatch();
             
             // sw.Start();
             // input.Verts = VertexProximityFilter.ProcessWithArrays(input.Verts, MinDistance);
             // sw.Stop();
             // Debug.Log("Arrays " + sw.ElapsedMilliseconds);
             
-            sw = new Stopwatch();
-            sw.Start();
+            // sw = new Stopwatch();
+            // sw.Start();
             input.Verts = VertexProximityFilter.ProcessWithLists(input.Verts, MinDistance);
-            sw.Stop();
+            // sw.Stop();
             
-            Debug.Log("Lists " + sw.ElapsedMilliseconds);
+            // Debug.Log("Lists " + sw.ElapsedMilliseconds);
             
             // sw = new Stopwatch();
             // sw.Start();

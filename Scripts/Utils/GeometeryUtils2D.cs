@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class GeometeryUtils2D
@@ -127,4 +128,31 @@ public static class GeometeryUtils2D
  
         return doIntersect;
     }
+
+    public static bool SegmentIntersectsVertical(float2 a, float2 b, float x)
+    {
+        if (a.x > b.x)
+        {
+            (a, b) = (b, a);
+        }
+        //
+        // if (x < a.x || x > b.x)
+        //     return false;
+
+        // if(x >= a.x && x <= b.x)
+        //     return true;
+        
+        if(x > a.x && x < b.x)
+            return true;
+        
+        return false;
+        
+        // float2 dir = b - a;
+        // float t = (x - a.x) / dir.x;
+        // float y = a.y + t * dir.y;
+        //
+        // return y >= 0 && y <= 1;
+    }
+
+
 }

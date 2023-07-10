@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProceduralToolkit;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VectorTerrain.Scripts.Utils;
 using Random = UnityEngine.Random;
 
@@ -41,7 +42,7 @@ namespace VectorTerrain.Scripts.Types
         private List<Vertex2> _averageLine = null;
         public List<Vertex2> AverageLine => _averageLine;
 
-        private int _generation;
+        [FormerlySerializedAs("gen")] public int generation;
         
         
         

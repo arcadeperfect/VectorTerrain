@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Nodez.Nodes;
 using Sirenix.Utilities;
 using Terrain;
@@ -7,6 +8,7 @@ using UnityEngine;
 using VectorTerrain.Scripts.Nodes;
 using VectorTerrain.Scripts.Types;
 using XNode;
+using Debug = UnityEngine.Debug;
 
 namespace VectorTerrain.Scripts.Graph
 {
@@ -126,6 +128,9 @@ namespace VectorTerrain.Scripts.Graph
         /// <exception cref="NullReferenceException"></exception>
         public TerrainGraphOutput GetGraphOutput(TerrainGraphInput input, bool viz)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            
             graphPlotList.Clear();
             foreach (TerrainNode node in nodes)
             {
@@ -177,6 +182,13 @@ namespace VectorTerrain.Scripts.Graph
             returnGraphOutput.PlotList = graphPlotList;
             
             returnGraphOutput.SectorData.ComputeAverageLine();
+            returnGraphOutput.SectorData.generation = input.generation;
+            
+            
+            sw.Stop();
+            
+            UnityEngine.Debug.Log (string.Format("Sector {0} toook {1}ms", input.generation, sw.ElapsedMilliseconds));
+            
             
             return returnGraphOutput;
         }
