@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using VectorTerrain.Scripts.Graph;
 using VectorTerrain.Scripts.Sector;
-using VectorTerrain.Scripts.Sector.SectorGroupPostProcessing;
+// using VectorTerrain.Scripts.Sector.SectorGroupPostProcessing;
 using VectorTerrain.Scripts.Terrain;
 
 namespace VectorTerrain.Scripts.Tester
@@ -161,8 +161,8 @@ namespace VectorTerrain.Scripts.Tester
                 _terrainGraphOutputDict[i] = GetDataFromGraph(new TerrainGraphInput(_terrainGraphOutputDict[i - 1]));
             }
 
-            if (postDeIntersect) _terrainGraphOutputDict = SectorGroupRemoveIntersections.Clean(_terrainGraphOutputDict);
-            if (postBlur) _terrainGraphOutputDict = SectorGroupBlur.Blur(_terrainGraphOutputDict, 10, 20);
+            // if (postDeIntersect) _terrainGraphOutputDict = SectorGroupRemoveIntersections.Clean(_terrainGraphOutputDict);
+            // if (postBlur) _terrainGraphOutputDict = SectorGroupBlur.Blur(_terrainGraphOutputDict, 10, 20);
             
             for (var i = 0; i < sectors; i++)
             {

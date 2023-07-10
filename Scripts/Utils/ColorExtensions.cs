@@ -1,5 +1,7 @@
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 namespace VectorTerrain.Scripts.Utils
@@ -36,6 +38,11 @@ namespace VectorTerrain.Scripts.Utils
         {
             Random.InitState(seed);
             return Color.HSVToRGB(Random.value, 1, 15, true);
+        }
+        
+        public static float3 ToFloat3(this Color color)
+        {
+            return new float3(color.r, color.g, color.b);
         }
     }
 }

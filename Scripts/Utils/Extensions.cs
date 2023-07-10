@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using VectorTerrain.Scripts.Types;
+using VectorTerrain.Scripts.Types.Burst;
 
 namespace VectorTerrain.Scripts.Utils
 {
@@ -36,5 +39,23 @@ namespace VectorTerrain.Scripts.Utils
             }
             return returnMe;
         }
+        
+        public static float4 ToFloat4(this Color color)
+        {
+            return new float4(color.r, color.g, color.b, color.a);
+        }
+        
+        
+        
+        public static List<BurstVertex> ToBurstVertex(this List<Vertex2> sourceList)
+        {
+            return sourceList.Select(vertex => (BurstVertex)vertex).ToList();
+        }
+        
+        public static List<Vertex2> ToVertex2(this List<BurstVertex> sourceList)
+        {
+            return sourceList.Select(burstVertex => (Vertex2)burstVertex).ToList();
+        }
+        
     }
 }

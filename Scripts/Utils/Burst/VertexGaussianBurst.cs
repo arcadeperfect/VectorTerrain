@@ -8,6 +8,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using VectorTerrain.Scripts.Types;
+using VectorTerrain.Scripts.Types.Burst;
 
 namespace VectorTerrain.Scripts.Utils.Burst
 {
@@ -16,43 +17,43 @@ namespace VectorTerrain.Scripts.Utils.Burst
         [BurstCompile]
         struct GaussianJob : IJob
         {
-            public float sigma;
-            public int windowSize;
-            public NativeArray<float2> inputLine;
-            public NativeArray<float2> smoothedLine;
+            public float Sigma;
+            public int WindowSize;
+            public NativeArray<BurstVertex> InputLine;
+            public NativeArray<BurstVertex> OutputLine;
 
 
             public void Execute()
             {
                 // smoothedLine = new NativeArray<float2>(inputLine.Length, Allocator.Persistent);
                 
-                var n = inputLine.Length;
+                var n = InputLine.Length;
                 var xInput = new float[n];
                 var yInput = new float[n];
                 
                 for (var i = 0; i < n; i++)
                 {
-                    xInput[i] = inputLine[i].x;
-                    yInput[i] = inputLine[i].y;
+                    xInput[i] = InputLine[i].X;
+                    yInput[i] = InputLine[i].Y;
                 }
                 
-                var gaussianKernel = GaussianWeights(windowSize, sigma);
+                var gaussianKernel = GaussianWeights(WindowSize, Sigma);
                 
                 var xSmoothed = ApplyGaussianFilter(xInput, gaussianKernel);
                 var ySmoothed = ApplyGaussianFilter(yInput, gaussianKernel);
                 
                 for (var i = 0; i < n; i++)
                 {
-                    var thisVert = inputLine[i];
-                    thisVert.x = xSmoothed[i];
-                    thisVert.y = ySmoothed[i];
-                    smoothedLine[i] = thisVert;
+                    var thisVert = InputLine[i];
+                    thisVert.X = xSmoothed[i];
+                    thisVert.Y = ySmoothed[i];
+                    OutputLine[i] = thisVert;
                 }
                 
-                smoothedLine[0] = inputLine[0];
-                smoothedLine[n - 1] = inputLine[n - 1];
+                OutputLine[0] = InputLine[0];
+                OutputLine[n - 1] = InputLine[n - 1];
                 
-                inputLine = smoothedLine;
+                // inputLine = smoothedLine;
             }
         }
 
@@ -70,8 +71,8 @@ namespace VectorTerrain.Scripts.Utils.Burst
             List<Vertex2> output = new List<Vertex2>(n);
 
         
-            var toJob = new NativeArray<float2>(n, Allocator.Persistent);
-            var smoothedLine = new NativeArray<float2>(n, Allocator.Persistent);
+            var toJob = new NativeArray<BurstVertex>(n, Allocator.Persistent);
+            var smoothedLine = new NativeArray<BurstVertex>(n, Allocator.Persistent);
             
             for (var i = 0; i < n; i++)
             {
@@ -80,10 +81,10 @@ namespace VectorTerrain.Scripts.Utils.Burst
             
             var job = new GaussianJob
             {
-                sigma = sigma,
-                windowSize = windowSize,
-                inputLine = toJob,
-                smoothedLine = smoothedLine
+                Sigma = sigma,
+                WindowSize = windowSize,
+                InputLine = toJob,
+                OutputLine = smoothedLine
             };
             
             var handle = job.Schedule();
@@ -92,7 +93,7 @@ namespace VectorTerrain.Scripts.Utils.Burst
             for(int i = 0; i < input.Count; i++)
             {
                 var v = input[i];
-                v.Pos = toJob[i];
+                v.Pos = smoothedLine[i].Pos;
                 output.Add(v);
             }
             
@@ -146,7 +147,4 @@ namespace VectorTerrain.Scripts.Utils.Burst
             return weights;
         }
     }
-    
-    
-    
 }
